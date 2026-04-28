@@ -8,20 +8,17 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "predev": "node scripts/check-native-modules.mjs",
-    "prebuild": "node scripts/check-native-modules.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "postinstall": "node scripts/check-native-modules.mjs",
     "waitlist:list": "node scripts/list-waitlist.mjs",
     "waitlist:csv": "node scripts/list-waitlist.mjs --csv",
     "waitlist:json": "node scripts/list-waitlist.mjs --json"
   },
   "dependencies": {
-    "better-sqlite3": "^11.7.0",
+    "@libsql/client": "^0.17.3",
     "next": "^16.2.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
@@ -29,7 +26,6 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
-    "@types/better-sqlite3": "^7.6.12",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

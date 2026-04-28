@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
 
   let inserted = false;
   try {
-    const result = addToWaitlist({ email, zip, referrer, ipHash });
+    const result = await addToWaitlist({ email, zip, referrer, ipHash });
     inserted = result.inserted;
   } catch (err) {
     console.error("[waitlist] DB insert failed", err);

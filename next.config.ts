@@ -31,7 +31,6 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  serverExternalPackages: ["better-sqlite3"],
   turbopack: { root: projectRoot },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

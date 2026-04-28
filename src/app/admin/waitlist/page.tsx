@@ -45,8 +45,8 @@ export default async function WaitlistAdminPage({
     );
   }
 
-  const rows = listWaitlist({ limit: 1000 });
-  const total = waitlistCount();
+  const rows = await listWaitlist({ limit: 1000 });
+  const total = await waitlistCount();
 
   return (
     <main className="min-h-screen bg-[#15161b] text-zinc-200 p-6 sm:p-10 font-sans">

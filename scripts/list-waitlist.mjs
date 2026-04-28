@@ -7,29 +7,56 @@
  *   npm run waitlist:list -- --csv  # CSV to stdout (pipe to a file)
  *   npm run waitlist:list -- --json # JSON array to stdout
  *
- * Reads from $WAITLIST_DB_PATH or ./data/waitlist.db.
+ * Picks Turso when TURSO_DATABASE_URL + TURSO_AUTH_TOKEN are set,
+ * otherwise reads the local SQLite file at ./data/waitlist.db.
  */
 
-import Database from "better-sqlite3";
+import { createClient } from "@libsql/client";
 import path from "node:path";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
-const DB_PATH = process.env.WAITLIST_DB_PATH ?? "./data/waitlist.db";
+// Tiny .env.local loader so the script picks up Turso creds without dotenv dep.
+function loadEnvLocal() {
+  const p = ".env.local";
+  if (!existsSync(p)) return;
+  const text = readFileSync(p, "utf8");
+  for (const line of text.split("\n")) {
+    const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
+    if (m && !process.env[m[1]]) process.env[m[1]] = m[2];
+  }
+}
+loadEnvLocal();
+
 const args = new Set(process.argv.slice(2));
+const TURSO_URL = process.env.TURSO_DATABASE_URL;
+const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN;
+const LOCAL_PATH = process.env.WAITLIST_DB_PATH ?? "./data/waitlist.db";
 
-if (!existsSync(DB_PATH)) {
-  console.error(`No waitlist DB at ${path.resolve(DB_PATH)}`);
-  console.error("Has anyone joined the waitlist yet?");
-  process.exit(1);
+let client;
+let source;
+if (TURSO_URL && TURSO_TOKEN) {
+  client = createClient({ url: TURSO_URL, authToken: TURSO_TOKEN });
+  source = TURSO_URL;
+} else {
+  if (!existsSync(LOCAL_PATH)) {
+    console.error(`No waitlist DB at ${path.resolve(LOCAL_PATH)}`);
+    console.error("Has anyone joined the waitlist yet?");
+    process.exit(1);
+  }
+  client = createClient({ url: `file:${LOCAL_PATH}` });
+  source = path.resolve(LOCAL_PATH);
 }
 
-const db = new Database(DB_PATH, { readonly: true });
-const rows = db
-  .prepare(
-    "SELECT id, email, zip, referrer, created_at FROM waitlist ORDER BY created_at DESC",
-  )
-  .all();
-const total = rows.length;
+const result = await client.execute(
+  "SELECT id, email, zip, referrer, created_at FROM waitlist ORDER BY created_at DESC",
+);
+const rows = result.rows.map((r) => ({
+  id: Number(r.id),
+  email: String(r.email),
+  zip: r.zip == null ? null : String(r.zip),
+  referrer: r.referrer == null ? null : String(r.referrer),
+  created_at: Number(r.created_at),
+}));
 
 const fmt = (ts) =>
   new Date(ts).toISOString().replace("T", " ").replace(/\.\d{3}Z$/, "Z");
@@ -54,16 +81,15 @@ if (args.has("--csv")) {
   process.stdout.write("id,email,zip,referrer,created_at_iso\n");
   for (const r of rows) {
     process.stdout.write(
-      [r.id, safe(r.email), safe(r.zip), safe(r.referrer), fmt(r.created_at)].join(",") +
-        "\n",
+      [r.id, safe(r.email), safe(r.zip), safe(r.referrer), fmt(r.created_at)].join(",") + "\n",
     );
   }
   process.exit(0);
 }
 
-// Pretty table
-if (total === 0) {
+if (rows.length === 0) {
   console.log("(no signups yet)");
+  console.log(`source: ${source}`);
   process.exit(0);
 }
 
@@ -73,7 +99,6 @@ const cols = [
   { key: "zip", label: "ZIP", w: 6 },
   { key: "joined", label: "Joined (UTC)", w: 22 },
 ];
-
 const pad = (s, w) => {
   s = s == null ? "" : String(s);
   return s.length >= w ? s.slice(0, w - 1) + "…" : s + " ".repeat(w - s.length);
@@ -92,4 +117,4 @@ for (const r of rows) {
   );
 }
 console.log("");
-console.log(`${total} ${total === 1 ? "signup" : "signups"} · ${path.resolve(DB_PATH)}`);
+console.log(`${rows.length} ${rows.length === 1 ? "signup" : "signups"} · ${source}`);

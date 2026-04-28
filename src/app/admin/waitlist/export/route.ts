@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden." }, { status: 403 });
   }
 
-  const rows = listWaitlist({ limit: 1000 });
+  const rows = await listWaitlist({ limit: 1000 });
   const lines = ["id,email,zip,referrer,created_at_iso"];
   for (const r of rows) {
     lines.push(
