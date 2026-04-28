@@ -106,14 +106,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Send confirmation email only on a real (new) insert. Don't await failure —
-  // the user shouldn't see a 500 just because the email provider hiccuped.
+  // Send confirmation email only on a real (new) insert. We *await* it
+  // because on Vercel's serverless runtime, fire-and-forget promises after
+  // the response is sent can be terminated before the email actually goes
+  // out. A failure here still returns 200 — the user is on the waitlist
+  // even if the welcome email hiccupped.
   if (inserted) {
-    sendWaitlistConfirmation(email, zip ?? null)
-      .then((r) => {
-        if (!r.ok) console.warn("[waitlist] email skipped:", r.error);
-      })
-      .catch((err) => console.warn("[waitlist] email error:", err));
+    try {
+      const result = await sendWaitlistConfirmation(email, zip ?? null);
+      if (!result.ok) {
+        console.warn("[waitlist] email skipped:", result.error);
+      }
+    } catch (err) {
+      console.warn("[waitlist] email error:", err);
+    }
   }
 
   // Always return the same shape regardless of whether the email already
