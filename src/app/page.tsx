@@ -1,19 +1,35 @@
 import FloatingNav from "@/components/FloatingNav";
 import PlanCarousel from "@/components/PlanCarousel";
+import ScrollReveal from "@/components/ScrollReveal";
+import SiteFooter from "@/components/SiteFooter";
 import WaitlistForm from "@/components/WaitlistForm";
-import { Inter, Inter_Tight } from "next/font/google";
 
-const displayFont = Inter_Tight({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-display",
-});
-
-const bodyFont = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
-});
+const FAQS = [
+  {
+    q: "Will I need to create an account?",
+    a: "No account required. Drop your ZIP, set your priorities, see your plans. We'll only ask for an email if you want results sent to you or saved between visits.",
+  },
+  {
+    q: "Will Texergy AI really be free to use?",
+    a: "Yes. Texergy AI will be free for shoppers to use: no subscription, no credit card, and no paywall on recommendations. If we introduce provider-facing paid listings later, those terms will be disclosed and will not affect your ranking.",
+  },
+  {
+    q: "Is my data secure?",
+    a: "Yes. We store your email and (optionally) your ZIP. That's it. We use limited anti-abuse protections, but we don't use technical identifiers to profile or market to you. We don't sell or share your information, and we don't run third-party advertising trackers on this site. See our Privacy Policy for the full breakdown.",
+  },
+  {
+    q: "How will Texergy make money if it's free?",
+    a: "For now, we're focused on getting recommendations right. Longer term, Texergy may charge providers a flat fee for verified fit-based listings, never undisclosed referral kickbacks. Rankings will stay independent of who pays us.",
+  },
+  {
+    q: "Where do the plan prices come from?",
+    a: "Power to Choose, the official Texas Public Utility Commission resource. Texergy refreshes pricing daily and normalizes the rate structures (bill credits, tiered rates, base fees, TDU pass-throughs) so you see actual cost for your usage profile, not the marketing rate.",
+  },
+  {
+    q: "What if my ZIP isn't in a deregulated area?",
+    a: "We'll tell you. About 15% of Texans are served by municipal utilities (Austin Energy, CPS Energy, San Antonio) or rural co-ops where you can't switch providers. If that's you, we'll explain why and point you to your local utility's rate sheet.",
+  },
+];
 
 const STEPS = [
   {
@@ -119,9 +135,10 @@ export default function HomePage() {
   return (
     <main
       id="top"
-      className={`${displayFont.variable} ${bodyFont.variable} relative min-h-screen overflow-x-clip`}
+      className="relative min-h-screen overflow-x-clip"
     >
       <FloatingNav />
+      <ScrollReveal />
 
       {/* Background layers */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-grid" />
@@ -167,12 +184,14 @@ export default function HomePage() {
       </section>
 
       <div className="mx-auto max-w-5xl px-6">
-        <div className="divider" />
+        <div className="divider">
+          <span aria-hidden className="divider-spark" />
+        </div>
       </div>
 
       {/* How it works */}
       <section id="how" className="mx-auto max-w-6xl px-6 py-20 scroll-mt-24">
-        <div className="text-center mb-14">
+        <div className="reveal text-center mb-14">
           <p className="body-type text-[22px] uppercase tracking-[0.22em] text-ember-400 mb-4 font-medium">
             How it works
           </p>
@@ -184,11 +203,11 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-3">
+        <div className="reveal-stagger grid gap-5 sm:grid-cols-3">
           {STEPS.map((s) => (
             <div
               key={s.n}
-              className="card card-hover rounded-2xl p-6 text-left"
+              className="reveal card card-hover rounded-2xl p-6 text-left"
             >
               <div className="flex items-center justify-between mb-6">
                 <span className="step-icon">{s.icon}</span>
@@ -209,13 +228,15 @@ export default function HomePage() {
       </section>
 
       <div className="mx-auto max-w-5xl px-6">
-        <div className="divider" />
+        <div className="divider">
+          <span aria-hidden className="divider-spark" />
+        </div>
       </div>
 
       {/* Why */}
       <section id="why" className="relative mx-auto max-w-6xl px-6 pt-20 pb-14 scroll-mt-24">
         <span aria-hidden className="section-glow-br" />
-        <div className="text-center mb-14">
+        <div className="reveal text-center mb-14">
           <p className="body-type text-[22px] uppercase tracking-[0.22em] text-ember-400 mb-4 font-medium">
             Why Texergy
           </p>
@@ -224,9 +245,9 @@ export default function HomePage() {
           </h2>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="reveal-stagger grid gap-5 sm:grid-cols-2">
           {FEATURES.map((f) => (
-            <div key={f.title} className="card card-hover rounded-2xl p-6">
+            <div key={f.title} className="reveal card card-hover rounded-2xl p-6">
               <div className="flex items-start gap-4">
                 <span className="step-icon shrink-0">{f.icon}</span>
                 <div>
@@ -244,7 +265,59 @@ export default function HomePage() {
       </section>
 
       <div className="mx-auto max-w-5xl px-6">
-        <div className="divider" />
+        <div className="divider">
+          <span aria-hidden className="divider-spark" />
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <section
+        id="faq"
+        className="relative mx-auto max-w-3xl px-6 pt-20 pb-16 scroll-mt-24"
+      >
+        <div className="reveal text-center mb-12">
+          <p className="body-type text-[22px] uppercase tracking-[0.22em] text-ember-400 mb-4 font-medium">
+            Frequently Asked Questions
+          </p>
+          <h2 className="section-heading text-3xl sm:text-5xl text-zinc-50 tracking-tight">
+            Common questions
+          </h2>
+          <p className="body-type mx-auto mt-4 max-w-xl text-zinc-400">
+            Quick answers to what people ask before joining the waitlist.
+          </p>
+        </div>
+
+        <div className="reveal-stagger space-y-3">
+          {FAQS.map((f) => (
+            <details
+              key={f.q}
+              className="reveal card rounded-2xl px-5 py-4 sm:px-6 sm:py-5 group cursor-pointer transition-colors"
+            >
+              <summary className="flex items-start justify-between gap-4 list-none [&::-webkit-details-marker]:hidden">
+                <h3 className="display-type text-base sm:text-lg font-semibold text-zinc-100 leading-snug">
+                  {f.q}
+                </h3>
+                <span
+                  aria-hidden
+                  className="shrink-0 mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition-transform duration-200 group-open:rotate-45"
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M6 1.5v9M1.5 6h9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                </span>
+              </summary>
+              <p className="body-type text-sm sm:text-[15px] text-zinc-400 leading-relaxed mt-3 pr-10">
+                {f.a}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="divider">
+          <span aria-hidden className="divider-spark" />
+        </div>
       </div>
 
       {/* Contact */}
@@ -253,19 +326,21 @@ export default function HomePage() {
         className="relative mx-auto max-w-3xl px-6 pt-16 pb-10 scroll-mt-24 text-center"
       >
         <span aria-hidden className="section-glow-tl" />
-        <p className="body-type text-[22px] uppercase tracking-[0.22em] text-ember-400 mb-4 font-medium">
-          Contact
-        </p>
-        <h2 className="section-heading text-3xl sm:text-5xl text-zinc-50 tracking-tight mb-4">
-          Questions? Partnerships? Just curious?
-        </h2>
-        <p className="body-type text-zinc-400 mb-8 leading-relaxed">
-          We'd love to hear from you. Drop us a line and we'll get back as soon
-          as we can.
-        </p>
+        <div className="reveal">
+          <p className="body-type text-[22px] uppercase tracking-[0.22em] text-ember-400 mb-4 font-medium">
+            Contact
+          </p>
+          <h2 className="section-heading text-3xl sm:text-5xl text-zinc-50 tracking-tight mb-4">
+            Questions? Partnerships? Just curious?
+          </h2>
+          <p className="body-type text-zinc-400 mb-8 leading-relaxed">
+            We'd love to hear from you. Drop us a line and we'll get back as soon
+            as we can.
+          </p>
+        </div>
         <a
           href="mailto:hello@texergy.ai"
-          className="inline-flex items-center gap-3 card card-hover rounded-2xl px-6 py-4 text-zinc-100"
+          className="reveal inline-flex items-center gap-3 card card-hover rounded-2xl px-6 py-4 text-zinc-100"
         >
           <span className="step-icon" style={{ width: 36, height: 36 }}>
             <svg
@@ -287,77 +362,7 @@ export default function HomePage() {
         </a>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.06] relative">
-        <div className="mx-auto max-w-6xl px-6 pt-8 pb-14 sm:pt-10 sm:pb-16">
-          <div className="grid gap-12 lg:grid-cols-[1.15fr_1.35fr]">
-            <div className="max-w-sm">
-              <div className="flex items-center">
-                <p className="display-type brand-gradient text-2xl font-semibold tracking-tight whitespace-nowrap">
-                  Texergy AI
-                </p>
-              </div>
-
-              <p className="mt-5 text-sm leading-7 text-zinc-400">
-                A focused Texas electricity helper that reads the fine print,
-                ranks plans by fit, and keeps the experience clear from the
-                first ZIP code to the final recommendation.
-              </p>
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                <a
-                  href="#waitlist"
-                  className="btn-ghost rounded-full px-4 py-2 text-sm"
-                >
-                  Join waitlist
-                </a>
-                <a
-                  href="mailto:hello@texergy.ai"
-                  className="btn-ghost rounded-full px-4 py-2 text-sm"
-                >
-                  hello@texergy.ai
-                </a>
-              </div>
-            </div>
-
-            <div className="grid gap-8 sm:grid-cols-3">
-              <div>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-200">
-                  Product
-                </h3>
-                <ul className="mt-4 space-y-3 text-sm text-zinc-400">
-                  <li><a href="#waitlist" className="footer-link">Waitlist</a></li>
-                  <li><a href="#how" className="footer-link">How it works</a></li>
-                  <li><a href="#why" className="footer-link">Why Texergy</a></li>
-                  <li><a href="#contact" className="footer-link">Contact</a></li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-200">
-                  Company
-                </h3>
-                <ul className="mt-4 space-y-3 text-sm text-zinc-400">
-                  <li><a href="mailto:hello@texergy.ai" className="footer-link">hello@texergy.ai</a></li>
-                  <li><span className="footer-muted">Austin, Texas</span></li>
-                  <li><a href="/blog" className="footer-link">Blog</a></li>
-                  <li><a href="/faq" className="footer-link">FAQ</a></li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-200">
-                  Legal
-                </h3>
-                <ul className="mt-4 space-y-3 text-sm text-zinc-400">
-                  <li><a href="/privacy" className="footer-link">Privacy Policy</a></li>
-                  <li><a href="/terms" className="footer-link">Terms of Service</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter homePage />
     </main>
   );
 }

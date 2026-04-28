@@ -1,5 +1,19 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, Inter_Tight } from "next/font/google";
+import RefreshToHome from "@/components/RefreshToHome";
 import "./globals.css";
+
+const displayFont = Inter_Tight({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-display",
+});
+
+const bodyFont = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
+});
 
 export const metadata: Metadata = {
   title: "Texergy AI — Find your perfect Texas electricity plan",
@@ -34,8 +48,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className={`${displayFont.variable} ${bodyFont.variable}`}>
+      <body>
+        <RefreshToHome />
+        {children}
+      </body>
     </html>
   );
 }

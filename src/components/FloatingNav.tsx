@@ -1,15 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 const LINKS = [
-  { href: "#how", label: "How it works" },
-  { href: "#why", label: "Why Texergy" },
-  { href: "#contact", label: "Contact" },
+  { hash: "#how", label: "How it works" },
+  { hash: "#why", label: "Why Texergy" },
+  { hash: "#faq", label: "FAQ" },
+  { hash: "#contact", label: "Contact" },
 ];
 
 export default function FloatingNav() {
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -17,6 +22,26 @@ export default function FloatingNav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Brand: on home → smooth-scroll to top, clear hash. On any sub-page → go home.
+  const onBrandClick = () => {
+    if (isHome) {
+      if (window.location.hash) {
+        history.replaceState(
+          null,
+          "",
+          window.location.pathname + window.location.search,
+        );
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    } else {
+      router.push("/");
+    }
+  };
+
+  // Section anchors: on home → in-page hash; elsewhere → /#hash to land on home and scroll.
+  const linkHref = (hash: string) => (isHome ? hash : `/${hash}`);
+  const ctaHref = isHome ? "#waitlist" : "/#waitlist";
 
   return (
     <div
@@ -32,17 +57,8 @@ export default function FloatingNav() {
       >
         <button
           type="button"
-          onClick={() => {
-            if (window.location.hash) {
-              history.replaceState(
-                null,
-                "",
-                window.location.pathname + window.location.search,
-              );
-            }
-            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-          }}
-          aria-label="Back to top"
+          onClick={onBrandClick}
+          aria-label={isHome ? "Back to top" : "Texergy AI home"}
           className="flex items-center pr-4 mr-1 border-r border-white/10 cursor-pointer"
         >
           <span className="display-type brand-gradient text-[16px] font-semibold tracking-tight whitespace-nowrap">
@@ -50,11 +66,11 @@ export default function FloatingNav() {
           </span>
         </button>
 
-        <ul className="hidden sm:flex items-center gap-1">
+        <ul className="hidden md:flex items-center gap-1">
           {LINKS.map((l) => (
-            <li key={l.href}>
+            <li key={l.hash}>
               <a
-                href={l.href}
+                href={linkHref(l.hash)}
                 className="nav-link rounded-full px-4 py-2 text-[14px] font-medium"
               >
                 {l.label}
@@ -64,7 +80,7 @@ export default function FloatingNav() {
         </ul>
 
         <a
-          href="#waitlist"
+          href={ctaHref}
           className="btn-primary ml-2 rounded-full px-5 py-2.5 text-[14px] whitespace-nowrap"
         >
           Join waitlist
