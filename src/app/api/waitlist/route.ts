@@ -115,8 +115,9 @@ export async function POST(req: NextRequest) {
     try {
       const result = await sendWaitlistConfirmation(email, zip ?? null);
       if (result.ok) {
+        // Log only the Resend message id — never the email address (PII).
         console.log(
-          `[waitlist] confirmation sent to ${email} (resend id: ${result.id ?? "n/a"})`,
+          `[waitlist] confirmation sent (resend id: ${result.id ?? "n/a"})`,
         );
       } else {
         console.warn("[waitlist] email skipped:", result.error);
