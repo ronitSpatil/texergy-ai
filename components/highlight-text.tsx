@@ -47,10 +47,10 @@ export function HighlightText({ children, className = "", parallaxSpeed = 0.3 }:
       tl.fromTo(
         textRef.current,
         {
-          color: "rgb(250, 250, 250)", // foreground color
+          color: "var(--foreground)",
         },
         {
-          color: "#000000",
+          color: "var(--accent-foreground)",
           duration: 0.6,
           ease: "power2.out",
         },

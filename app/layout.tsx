@@ -50,7 +50,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0c",
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
 };
@@ -63,7 +63,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${ibmPlexSans.variable} ${ibmPlexMono.variable} ${bebasNeue.variable} bg-background`}
+      className={`light ${ibmPlexSans.variable} ${ibmPlexMono.variable} ${bebasNeue.variable} bg-background`}
       suppressHydrationWarning
     >
       <body

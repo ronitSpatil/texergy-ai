@@ -3,8 +3,49 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Custom editorial design tokens - monochrome with orange accent */
-:root {
+/* Light mode experiment with orange accent. Remove the .light class to roll back. */
+.light {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.16 0 0);
+  --card: oklch(0.985 0 0);
+  --card-foreground: oklch(0.16 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0 0);
+  --primary: oklch(0.16 0 0);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0 0);
+  --secondary-foreground: oklch(0.24 0 0);
+  --muted: oklch(0.9 0 0);
+  --muted-foreground: oklch(0.42 0 0);
+  --accent: oklch(0.7 0.2 45);
+  --accent-foreground: oklch(0.12 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.82 0 0);
+  --input: oklch(0.965 0 0);
+  --ring: oklch(0.7 0.2 45);
+  --radius: 0rem;
+  --sidebar: oklch(0.98 0 0);
+  --sidebar-foreground: oklch(0.16 0 0);
+  --sidebar-primary: oklch(0.7 0.2 45);
+  --sidebar-primary-foreground: oklch(0.12 0 0);
+  --sidebar-accent: oklch(0.94 0 0);
+  --sidebar-accent-foreground: oklch(0.16 0 0);
+  --sidebar-border: oklch(0.82 0 0);
+  --sidebar-ring: oklch(0.7 0.2 45);
+  --grid-line: oklch(0.88 0 0);
+  --scrollbar-track: hsl(0, 0%, 100%);
+  --scrollbar-thumb: hsl(0, 0%, 72%);
+  --scrollbar-thumb-hover: hsl(0, 0%, 58%);
+  --split-flap-bg: oklch(0.985 0 0);
+  --split-flap-bg-active: oklch(0.94 0 0);
+  --split-flap-text: oklch(0.12 0 0);
+  --split-flap-divider: oklch(0 0 0 / 0.16);
+}
+
+/* Original editorial dark palette retained as the default and dark override. */
+:root:not(.light),
+.dark {
   --background: oklch(0.08 0 0);
   --foreground: oklch(0.95 0 0);
   --card: oklch(0.12 0 0);
@@ -33,6 +74,14 @@
   --sidebar-accent-foreground: oklch(0.95 0 0);
   --sidebar-border: oklch(0.25 0 0);
   --sidebar-ring: oklch(0.7 0.2 45);
+  --grid-line: oklch(0.2 0 0);
+  --scrollbar-track: hsl(0, 0%, 8%);
+  --scrollbar-thumb: hsl(0, 0%, 24%);
+  --scrollbar-thumb-hover: hsl(0, 0%, 32%);
+  --split-flap-bg: hsl(0, 0%, 0%);
+  --split-flap-bg-active: rgba(249, 115, 22, 0.2);
+  --split-flap-text: #ffffff;
+  --split-flap-divider: rgb(0 0 0 / 0.2);
 }
 
 @theme inline {
@@ -82,14 +131,14 @@
     max-width: 100vw;
     /* Apply scrollbar styles to html element */
     scrollbar-width: thin;
-    scrollbar-color: hsl(0, 0%, 24%) hsl(0, 0%, 8%);
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   }
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;
     max-width: 100vw;
     scrollbar-width: thin;
-    scrollbar-color: hsl(0, 0%, 24%) hsl(0, 0%, 8%);
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   }
   /* Webkit scrollbar styling for html and body */
   html::-webkit-scrollbar,
@@ -98,16 +147,16 @@
   }
   html::-webkit-scrollbar-track,
   body::-webkit-scrollbar-track {
-    background: hsl(0, 0%, 8%);
+    background: var(--scrollbar-track);
   }
   html::-webkit-scrollbar-thumb,
   body::-webkit-scrollbar-thumb {
-    background: hsl(0, 0%, 24%);
+    background: var(--scrollbar-thumb);
     border-radius: 0px;
   }
   html::-webkit-scrollbar-thumb:hover,
   body::-webkit-scrollbar-thumb:hover {
-    background: hsl(0, 0%, 32%);
+    background: var(--scrollbar-thumb-hover);
   }
 }
 
@@ -126,8 +175,8 @@
 
 /* Grid background pattern */
 .grid-bg {
-  background-image: linear-gradient(to right, oklch(0.2 0 0) 1px, transparent 1px),
-    linear-gradient(to bottom, oklch(0.2 0 0) 1px, transparent 1px);
+  background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
