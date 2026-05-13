@@ -194,8 +194,8 @@ function SplitFlapChar({ char, index, animationKey, skipEntrance, speed, playCli
 
   const tileDelay = 0.15 * index
 
-  const bgColor = isSettled ? "hsl(0, 0%, 0%)" : "rgba(249, 115, 22, 0.2)"
-  const textColor = isSettled ? (accent ? "#f97316" : "#ffffff") : "#f97316"
+  const bgColor = isSettled ? "var(--split-flap-bg)" : "var(--split-flap-bg-active)"
+  const textColor = isSettled ? (accent ? "#f97316" : "var(--split-flap-text)") : "#f97316"
 
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current)
@@ -273,7 +273,7 @@ function SplitFlapChar({ char, index, animationKey, skipEntrance, speed, playCli
         <span
           className="leading-none transition-colors duration-150"
           style={{
-            color: accent ? "#f97316" : "#ffffff",
+            color: accent ? "#f97316" : "var(--split-flap-text)",
             transform: "translateY(-0.05em)",
           }}
         >
@@ -298,7 +298,10 @@ function SplitFlapChar({ char, index, animationKey, skipEntrance, speed, playCli
         transition: "background-color 0.15s ease",
       }}
     >
-      <div className="absolute inset-x-0 top-1/2 h-[1px] bg-black/20 pointer-events-none z-10" />
+      <div
+        className="absolute inset-x-0 top-1/2 h-[1px] pointer-events-none z-10"
+        style={{ backgroundColor: "var(--split-flap-divider)" }}
+      />
 
       <div className="absolute inset-x-0 top-0 bottom-1/2 flex items-end justify-center overflow-hidden">
         <span

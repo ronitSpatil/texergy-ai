@@ -122,7 +122,7 @@ export function DrawText({ text, className = "", duration = 0.08, delay = 0.5, s
           className="relative inline-block transition-colors duration-100"
           style={{
             backgroundColor: activeIndices[index] ? "#f97316" : "transparent",
-            color: activeIndices[index] ? "#000000" : flippingIndices[index] ? "#f97316" : "transparent",
+            color: activeIndices[index] ? "var(--accent-foreground)" : flippingIndices[index] ? "#f97316" : "transparent",
             padding: "0.08em 0.05em",
             marginRight: "0.06em",
             minWidth: char === " " ? "0.3em" : undefined,
