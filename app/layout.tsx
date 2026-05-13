@@ -21,7 +21,7 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  title: "Texergy AI — Find your perfect Texas electricity plan",
+  title: "Texergy AI | Shop Texas Energy Smarter",
   description:
     "Texergy AI uses artificial intelligence to match Texas residents with the electricity plan that fits their usage, priorities, and budget. Join the waitlist for early access.",
   keywords: [
