@@ -81,109 +81,101 @@ export function ColophonSection() {
       </div>
 
       {/* Multi-column layout */}
-      <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 md:gap-12">
+      <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-10 md:gap-x-10 lg:gap-x-6 xl:gap-x-10">
 
         {/* Product */}
         <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Product</h4>
+          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-5">Product</h4>
           <ul className="space-y-2">
-            <li className="font-mono text-xs text-foreground/80">How It Works</li>
-            <li className="font-mono text-xs text-foreground/80">Early Access</li>
-            <li className="font-mono text-xs text-foreground/80">FAQ</li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="#signals" className="hover:text-accent transition-colors duration-200">How It Works</a>
+            </li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="#work" className="hover:text-accent transition-colors duration-200">Considered Variables</a>
+            </li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="#principles" className="hover:text-accent transition-colors duration-200">Why Us</a>
+            </li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="#waitlist" className="hover:text-accent transition-colors duration-200">Early Access</a>
+            </li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="#faq" className="hover:text-accent transition-colors duration-200">FAQ</a>
+            </li>
           </ul>
         </div>
 
         {/* Company */}
         <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Company</h4>
+          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-5">Company</h4>
           <ul className="space-y-2">
-            <li className="font-mono text-xs text-foreground/80">About Texergy AI</li>
-            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
-              Blog
-              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">About Texergy AI</li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              Blog <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
-            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
-              Press
-              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              Press <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
-            <li className="font-mono text-xs text-foreground/80">Partner With Us</li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">Partner With Us</li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="mailto:hello@texergy.ai" className="hover:text-accent transition-colors duration-200">Support</a>
+            </li>
           </ul>
         </div>
 
         {/* Resources */}
         <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Resources</h4>
+          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-5">Resources</h4>
           <ul className="space-y-2">
-            <li>
-              <a href="https://www.powertochoose.org" target="_blank" rel="noopener noreferrer" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
-                Power to Choose
-              </a>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="https://www.powertochoose.org" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors duration-200">Power to Choose</a>
             </li>
-            <li>
-              <a href="https://www.puc.texas.gov" target="_blank" rel="noopener noreferrer" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
-                PUC of Texas
-              </a>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="https://www.puc.texas.gov" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors duration-200">PUCT</a>
             </li>
-            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
-              Energy Usage Calculator
-              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              Energy Usage Calculator <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
-            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
-              Texas Energy 101
-              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              Texas Energy 101 <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
-            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
-              Glossary
-              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              ESID Lookup <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
           </ul>
         </div>
 
-        {/* Plans */}
+        {/* Shop Electricity */}
         <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Plans</h4>
+          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-5">Shop Electricity</h4>
           <ul className="space-y-2">
-            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
-              Residential Plans
-              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              Service Areas <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
-            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
-              Commercial Plans
-              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              Residential Plans <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
-          </ul>
-        </div>
-
-        {/* Contact */}
-        <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Contact</h4>
-          <ul className="space-y-2">
-            <li>
-              <a href="mailto:hello@texergy.ai" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
-                hello@texergy.ai
-              </a>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              Commercial Plans <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
-            <li>
-              <a href="mailto:ronit@texergy.ai" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
-                ronit@texergy.ai
-              </a>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              Electricity Providers <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            </li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              Electric Utilities <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
           </ul>
         </div>
 
         {/* Legal */}
         <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Legal</h4>
+          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-5">Legal</h4>
           <ul className="space-y-2">
-            <li>
-              <a href="/terms" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
-                Terms of Service
-              </a>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="/terms" className="hover:text-accent transition-colors duration-200">Terms of Service</a>
             </li>
-            <li>
-              <a href="/privacy" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
-                Privacy Policy
-              </a>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="/privacy" className="hover:text-accent transition-colors duration-200">Privacy Policy</a>
             </li>
           </ul>
         </div>
