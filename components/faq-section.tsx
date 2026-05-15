@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SectionLabel } from "@/components/ui/section-label";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -28,6 +29,35 @@ const FAQS = [
     a: "Anytime. Reply to any email we send, or contact hello@texergy.ai with the subject \"delete my data\" and we'll remove your record within 7 days. No friction, no retention games.",
   },
 ];
+
+function ContactCard({
+  label,
+  heading,
+  body,
+  email,
+}: {
+  label: string;
+  heading: string;
+  body: string;
+  email: string;
+}) {
+  return (
+    <aside className="border border-border/40 px-6 py-6 bg-background/40 backdrop-blur-sm">
+      <SectionLabel>{label}</SectionLabel>
+      <h3 className="mt-3 font-[var(--font-bebas)] text-2xl md:text-3xl tracking-tight leading-[0.95]">
+        {heading}
+      </h3>
+      <p className="mt-3 font-mono text-sm text-muted-foreground leading-relaxed">{body}</p>
+      <a
+        href={`mailto:${email}`}
+        className="mt-4 inline-flex items-center gap-2 font-mono text-sm text-foreground hover:text-accent transition-colors border-b border-border/60 hover:border-accent pb-0.5"
+      >
+        {email}
+        <span aria-hidden>→</span>
+      </a>
+    </aside>
+  );
+}
 
 export function FaqSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -77,95 +107,65 @@ export function FaqSection() {
       className="relative py-32 pl-6 md:pl-28 pr-6 md:pr-12 border-t border-border/30"
     >
       <div ref={headerRef} className="mb-16">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
-          06 / FAQ
-        </span>
+        <SectionLabel>06 / FAQ</SectionLabel>
         <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">
           QUESTIONS?
         </h2>
       </div>
 
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-24 lg:items-stretch">
+      <div className="grid gap-10 lg:grid-cols-2 lg:gap-24 lg:items-start">
         <div ref={itemsRef} className="space-y-3 lg:pl-6">
-        {FAQS.map((f, i) => (
-          <details
-            key={f.q}
-            className="group border border-border/40 hover:border-accent/40 transition-colors duration-300 cursor-pointer"
-          >
-            <summary className="flex items-start justify-between gap-6 px-6 py-5 list-none [&::-webkit-details-marker]:hidden">
-              <div className="flex items-baseline gap-4">
-                <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground/70 shrink-0">
-                  {String(i + 1).padStart(2, "0")}
+          {FAQS.map((f, i) => (
+            <details
+              key={f.q}
+              className="group border border-border/40 hover:border-accent/40 transition-colors duration-300 cursor-pointer"
+            >
+              <summary className="flex items-start justify-between gap-6 px-6 py-5 list-none [&::-webkit-details-marker]:hidden">
+                <div className="flex items-baseline gap-4">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground/70 shrink-0">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="font-[var(--font-bebas)] text-xl md:text-2xl tracking-tight text-foreground group-hover:text-accent transition-colors">
+                    {f.q}
+                  </h3>
+                </div>
+                <span
+                  aria-hidden
+                  className="shrink-0 mt-1.5 inline-flex h-5 w-5 items-center justify-center text-foreground/60 transition-transform duration-300 group-open:rotate-45"
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="M7 1.5v11M1.5 7h11"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                 </span>
-                <h3 className="font-[var(--font-bebas)] text-xl md:text-2xl tracking-tight text-foreground group-hover:text-accent transition-colors">
-                  {f.q}
-                </h3>
+              </summary>
+              <div className="px-6 pb-6 pl-[calc(1.5rem+1.5ch+1rem)]">
+                <p className="font-mono text-sm text-muted-foreground leading-relaxed">
+                  {f.a}
+                </p>
               </div>
-              <span
-                aria-hidden
-                className="shrink-0 mt-1.5 inline-flex h-5 w-5 items-center justify-center text-foreground/60 transition-transform duration-300 group-open:rotate-45"
-              >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path
-                    d="M7 1.5v11M1.5 7h11"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
-            </summary>
-            <div className="px-6 pb-6 pl-[calc(1.5rem+1.5ch+1rem)]">
-              <p className="font-mono text-sm text-muted-foreground leading-relaxed">
-                {f.a}
-              </p>
-            </div>
-          </details>
-        ))}
+            </details>
+          ))}
         </div>
 
-        <div className="flex flex-col gap-6 lg:h-full">
-          <aside className="border border-border/40 px-6 py-6 bg-background/40 backdrop-blur-sm">
-            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
-              Still curious?
-            </span>
-            <h3 className="mt-3 font-[var(--font-bebas)] text-2xl md:text-3xl tracking-tight leading-[0.95]">
-              ASK US ANYTHING.
-            </h3>
-            <p className="mt-3 font-mono text-sm text-muted-foreground leading-relaxed">
-              Got a question we didn&apos;t cover? Send it over and we&apos;ll
-              get back to you.
-            </p>
-            <a
-              href="mailto:hello@texergy.ai"
-              className="mt-4 inline-flex items-center gap-2 font-mono text-sm text-foreground hover:text-accent transition-colors border-b border-border/60 hover:border-accent pb-0.5"
-            >
-              hello@texergy.ai
-              <span aria-hidden>→</span>
-            </a>
-          </aside>
-
-          <div aria-hidden className="hidden lg:block lg:flex-1" />
-
-          <aside className="border border-border/40 px-6 py-6 bg-background/40 backdrop-blur-sm lg:-mt-2">
-            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
-              Business
-            </span>
-            <h3 className="mt-3 font-[var(--font-bebas)] text-2xl md:text-3xl tracking-tight leading-[0.95]">
-              GET IN TOUCH.
-            </h3>
-            <p className="mt-3 font-mono text-sm text-muted-foreground leading-relaxed">
-              Feel free to reach out to us directly for any business
-              inquiries.
-            </p>
-            <a
-              href="mailto:ronit@texergy.ai"
-              className="mt-4 inline-flex items-center gap-2 font-mono text-sm text-foreground hover:text-accent transition-colors border-b border-border/60 hover:border-accent pb-0.5"
-            >
-              ronit@texergy.ai
-              <span aria-hidden>→</span>
-            </a>
-          </aside>
+        {/* Min-height matches collapsed FAQ list height so boxes stay aligned at top/bottom */}
+        <div className="flex flex-col justify-between lg:sticky lg:top-32 lg:self-start lg:min-h-[418px]">
+          <ContactCard
+            label="Still curious?"
+            heading="ASK US ANYTHING."
+            body="Got a question we didn't cover? Send it over and we'll get back to you."
+            email="hello@texergy.ai"
+          />
+          <ContactCard
+            label="Business"
+            heading="GET IN TOUCH."
+            body="Feel free to reach out to us directly for any business inquiries."
+            email="ronit@texergy.ai"
+          />
         </div>
       </div>
     </section>

@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useEffect } from "react"
+import { SectionLabel } from "@/components/ui/section-label"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
@@ -75,48 +76,81 @@ export function ColophonSection() {
     >
       {/* Section header */}
       <div ref={headerRef} className="mb-16">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">07 / Coming soon</span>
+        <SectionLabel>07 / Coming soon</SectionLabel>
         <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">TEXERGY AI</h2>
       </div>
 
       {/* Multi-column layout */}
-      <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 md:gap-12">
-        {/* Platform */}
+      <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 md:gap-12">
+
+        {/* Product */}
         <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Platform</h4>
+          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Product</h4>
           <ul className="space-y-2">
-            <li className="font-mono text-xs text-foreground/80">AI Plan Finder</li>
-            <li className="font-mono text-xs text-foreground/80">Texas Electricity</li>
+            <li className="font-mono text-xs text-foreground/80">How It Works</li>
+            <li className="font-mono text-xs text-foreground/80">Early Access</li>
+            <li className="font-mono text-xs text-foreground/80">FAQ</li>
           </ul>
         </div>
 
-        {/* Stack */}
+        {/* Company */}
         <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Stack</h4>
+          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Company</h4>
           <ul className="space-y-2">
-            <li className="font-mono text-xs text-foreground/80">Next.js</li>
-            <li className="font-mono text-xs text-foreground/80">Tailwind CSS</li>
-            <li className="font-mono text-xs text-foreground/80">Vercel</li>
+            <li className="font-mono text-xs text-foreground/80">About Texergy AI</li>
+            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
+              Blog
+              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            </li>
+            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
+              Press
+              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            </li>
+            <li className="font-mono text-xs text-foreground/80">Partner With Us</li>
           </ul>
         </div>
 
-        {/* Inputs */}
+        {/* Resources */}
         <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Inputs</h4>
+          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Resources</h4>
           <ul className="space-y-2">
-            <li className="font-mono text-xs text-foreground/80">ZIP Code</li>
-            <li className="font-mono text-xs text-foreground/80">Usage</li>
-            <li className="font-mono text-xs text-foreground/80">Preferences</li>
+            <li>
+              <a href="https://www.powertochoose.org" target="_blank" rel="noopener noreferrer" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
+                Power to Choose
+              </a>
+            </li>
+            <li>
+              <a href="https://www.puc.texas.gov" target="_blank" rel="noopener noreferrer" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
+                PUC of Texas
+              </a>
+            </li>
+            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
+              Energy Usage Calculator
+              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            </li>
+            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
+              Texas Energy 101
+              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            </li>
+            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
+              Glossary
+              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            </li>
           </ul>
         </div>
 
-        {/* Market */}
+        {/* Plans */}
         <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Market</h4>
+          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Plans</h4>
           <ul className="space-y-2">
-            <li className="font-mono text-xs text-foreground/80">Texas</li>
-            <li className="font-mono text-xs text-foreground/80">Residents</li>
-            <li className="font-mono text-xs text-foreground/80">Businesses</li>
+            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
+              Residential Plans
+              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            </li>
+            <li className="font-mono text-xs text-foreground/80 flex items-center gap-1.5">
+              Commercial Plans
+              <span className="font-mono text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+            </li>
           </ul>
         </div>
 
@@ -125,32 +159,35 @@ export function ColophonSection() {
           <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Contact</h4>
           <ul className="space-y-2">
             <li>
-              <a
-                href="mailto:hello@texergy.ai"
-                className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200"
-              >
-                Email
+              <a href="mailto:hello@texergy.ai" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
+                hello@texergy.ai
               </a>
             </li>
             <li>
-              <a
-                href="#"
-                className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200"
-              >
-                Support
+              <a href="mailto:ronit@texergy.ai" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
+                ronit@texergy.ai
               </a>
             </li>
           </ul>
         </div>
 
-        {/* Focus */}
+        {/* Legal */}
         <div className="col-span-1">
-          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Focus</h4>
+          <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-4">Legal</h4>
           <ul className="space-y-2">
-            <li className="font-mono text-xs text-foreground/80">Savings</li>
-            <li className="font-mono text-xs text-foreground/80">Clarity</li>
+            <li>
+              <a href="/terms" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
+                Terms of Service
+              </a>
+            </li>
+            <li>
+              <a href="/privacy" className="font-mono text-xs text-foreground/80 hover:text-accent transition-colors duration-200">
+                Privacy Policy
+              </a>
+            </li>
           </ul>
         </div>
+
       </div>
 
       {/* Bottom copyright */}

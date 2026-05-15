@@ -19,7 +19,7 @@ export default async function WaitlistAdminPage({
   if (!process.env.ADMIN_TOKEN) {
     return (
       <main className="min-h-screen bg-background text-foreground p-8 font-sans">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">Admin</span>
+        <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">Admin</span>
         <h1 className="mt-4 font-[var(--font-bebas)] text-4xl tracking-tight mb-4">DISABLED</h1>
         <p className="text-muted-foreground max-w-xl font-mono text-sm leading-relaxed">
           Set <code className="bg-input border border-border px-1.5 py-0.5">ADMIN_TOKEN</code>{" "}
@@ -55,7 +55,7 @@ export default async function WaitlistAdminPage({
       <div className="max-w-5xl mx-auto">
         <header className="flex items-end justify-between flex-wrap gap-4 mb-12">
           <div>
-            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
               01 / Internal
             </span>
             <h1 className="mt-3 font-[var(--font-bebas)] text-5xl tracking-tight leading-none">

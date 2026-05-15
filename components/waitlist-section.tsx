@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import WaitlistForm from "@/components/WaitlistForm";
+import { SectionLabel } from "@/components/ui/section-label";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -51,9 +52,7 @@ export function WaitlistSection() {
       className="relative py-32 pl-6 md:pl-28 pr-6 md:pr-12 border-t border-border/30"
     >
       <div ref={headerRef} className="mb-16">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
-          05 / Early Access
-        </span>
+        <SectionLabel>05 / Early Access</SectionLabel>
         <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">
           JOIN THE WAITLIST
         </h2>

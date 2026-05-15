@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
+import { SectionLabel } from "@/components/ui/section-label"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
@@ -49,14 +50,13 @@ export function SignalsSection() {
     const section = sectionRef.current
     const cursor = cursorRef.current
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = section.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
+    let rect = section.getBoundingClientRect()
+    const refreshRect = () => { rect = section.getBoundingClientRect() }
 
+    const handleMouseMove = (e: MouseEvent) => {
       gsap.to(cursor, {
-        x: x,
-        y: y,
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
         duration: 0.5,
         ease: "power3.out",
       })
@@ -68,11 +68,15 @@ export function SignalsSection() {
     section.addEventListener("mousemove", handleMouseMove)
     section.addEventListener("mouseenter", handleMouseEnter)
     section.addEventListener("mouseleave", handleMouseLeave)
+    window.addEventListener("resize", refreshRect)
+    window.addEventListener("scroll", refreshRect, { passive: true })
 
     return () => {
       section.removeEventListener("mousemove", handleMouseMove)
       section.removeEventListener("mouseenter", handleMouseEnter)
       section.removeEventListener("mouseleave", handleMouseLeave)
+      window.removeEventListener("resize", refreshRect)
+      window.removeEventListener("scroll", refreshRect)
     }
   }, [])
 
@@ -135,7 +139,7 @@ export function SignalsSection() {
 
       {/* Section header */}
       <div ref={headerRef} className="mb-16 pr-6 md:pr-12">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">02 / How It Works</span>
+        <SectionLabel>02 / How It Works</SectionLabel>
         <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">STEP BY STEP</h2>
       </div>
 

@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react"
 import { HighlightText } from "@/components/highlight-text"
+import { SectionLabel } from "@/components/ui/section-label"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
@@ -97,7 +98,7 @@ export function PrinciplesSection() {
     <section ref={sectionRef} id="principles" className="relative py-32 pl-6 md:pl-28 pr-6 md:pr-12">
       {/* Section header */}
       <div ref={headerRef} className="mb-24">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">04 / Why Us</span>
+        <SectionLabel>04 / Why Us</SectionLabel>
         <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">WHY TEXERGY AI</h2>
       </div>
 

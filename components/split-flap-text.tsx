@@ -195,7 +195,7 @@ function SplitFlapChar({ char, index, animationKey, skipEntrance, speed, playCli
   const tileDelay = 0.15 * index
 
   const bgColor = isSettled ? "var(--split-flap-bg)" : "var(--split-flap-bg-active)"
-  const textColor = isSettled ? (accent ? "#f97316" : "var(--split-flap-text)") : "#f97316"
+  const textColor = isSettled ? (accent ? "var(--accent)" : "var(--split-flap-text)") : "var(--accent)"
 
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current)
@@ -273,7 +273,7 @@ function SplitFlapChar({ char, index, animationKey, skipEntrance, speed, playCli
         <span
           className="leading-none transition-colors duration-150"
           style={{
-            color: accent ? "#f97316" : "var(--split-flap-text)",
+            color: accent ? "var(--accent)" : "var(--split-flap-text)",
             transform: "translateY(-0.05em)",
           }}
         >
