@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { ProgressBar } from "@/components/find/progress-bar";
 import { ModeStep } from "@/components/find/steps/mode-step";
 import { QuestionsStep } from "@/components/find/steps/questions-step";
@@ -79,34 +80,46 @@ export function RecommendWizard() {
         </div>
       </header>
 
-      <div className="flex-1 px-6 md:px-12 py-12">
-        {currentStep === "MODE" && <ModeStep onSelect={setMode} />}
+      <div className="flex-1 px-6 md:px-12 py-12 overflow-x-clip">
+        {/* The key prop on motion.div forces a fresh mount on every step
+            change, which lets each step play its enter animation. We drop
+            AnimatePresence + exit animations because the mode="wait" pattern
+            stalls under framer-motion 12 + React 19 in this app. The enter-
+            only animation still reads as a smooth transition. */}
+        <motion.div
+          key={currentStep}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {currentStep === "MODE" && <ModeStep onSelect={setMode} />}
 
-        {currentStep === "PROFILE" && (
-          <QuestionsStep
-            state={state}
-            onChange={(patch) => setState((s) => ({ ...s, ...patch }))}
-            onBack={goBack}
-            onNext={goNext}
-          />
-        )}
+          {currentStep === "PROFILE" && (
+            <QuestionsStep
+              state={state}
+              onChange={(patch) => setState((s) => ({ ...s, ...patch }))}
+              onBack={goBack}
+              onNext={goNext}
+            />
+          )}
 
-        {currentStep === "WEIGHTS" && (
-          <WeightsStep
-            weights={state.weights}
-            onChange={(weights) => setState((s) => ({ ...s, weights }))}
-            onBack={goBack}
-            onNext={goNext}
-          />
-        )}
+          {currentStep === "WEIGHTS" && (
+            <WeightsStep
+              weights={state.weights}
+              onChange={(weights) => setState((s) => ({ ...s, weights }))}
+              onBack={goBack}
+              onNext={goNext}
+            />
+          )}
 
-        {currentStep === "MATCH" && (
-          <ResultsStep
-            state={state}
-            onUpdate={(patch) => setState((s) => ({ ...s, ...patch }))}
-            onBack={goBack}
-          />
-        )}
+          {currentStep === "MATCH" && (
+            <ResultsStep
+              state={state}
+              onUpdate={(patch) => setState((s) => ({ ...s, ...patch }))}
+              onBack={goBack}
+            />
+          )}
+        </motion.div>
       </div>
     </div>
   );

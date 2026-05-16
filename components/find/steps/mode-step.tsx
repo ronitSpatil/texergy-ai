@@ -48,7 +48,7 @@ function ModeCard({
     <button
       type="button"
       onClick={onClick}
-      className="group text-left border border-border bg-card p-8 hover:border-accent hover:bg-card/80 transition-colors"
+      className="group text-left border border-border bg-card p-8 hover:border-accent hover:bg-card/80 transition-colors flex flex-col h-full"
     >
       <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent mb-6">
         {tag}
@@ -56,10 +56,12 @@ function ModeCard({
       <h3 className="font-[family-name:var(--font-bebas)] text-foreground text-4xl tracking-tight mb-3 group-hover:text-accent transition-colors">
         {title}
       </h3>
-      <p className="font-mono text-sm text-muted-foreground leading-relaxed mb-6">
+      {/* min-height holds the blurb area to 4 lines so cards of different blurb
+          lengths still line up their bullet lists vertically. */}
+      <p className="font-mono text-sm text-muted-foreground leading-relaxed mb-6 min-h-[6.5rem]">
         {blurb}
       </p>
-      <ul className="space-y-2">
+      <ul className="space-y-2 mt-auto">
         {bullets.map((b) => (
           <li key={b} className="font-mono text-xs text-foreground/80 flex gap-3">
             <span className="text-accent">→</span>

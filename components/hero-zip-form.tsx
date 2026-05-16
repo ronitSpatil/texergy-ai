@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { BitmapChevron } from "@/components/bitmap-chevron";
 import { ScrambleTextOnHover } from "@/components/scramble-text";
 
@@ -13,14 +14,17 @@ export function HeroZipForm() {
   const router = useRouter();
   const [zip, setZip] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submitting) return;
     if (!/^\d{5}$/.test(zip)) {
       setError("Please enter a 5-digit ZIP.");
       return;
     }
     setError(null);
+    setSubmitting(true);
     router.push(`/find/recommend?zip=${zip}`);
   }
 
@@ -42,20 +46,30 @@ export function HeroZipForm() {
             if (error) setError(null);
           }}
           aria-invalid={error != null}
-          className="w-32 bg-transparent border border-foreground/20 px-4 py-3.5 font-mono text-sm tracking-widest uppercase text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-accent transition-colors"
+          disabled={submitting}
+          className="w-32 bg-transparent border border-foreground/20 px-4 py-3.5 font-mono text-sm tracking-widest uppercase text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-accent transition-colors disabled:opacity-60"
         />
-        <button
+        <motion.button
           type="submit"
-          className="group inline-flex items-center gap-3 border border-foreground/20 px-7 py-3.5 font-mono text-sm uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-all duration-200"
+          disabled={submitting}
+          whileHover={!submitting ? { scale: 1.02 } : undefined}
+          whileTap={!submitting ? { scale: 0.98 } : undefined}
+          transition={{ type: "spring", stiffness: 380, damping: 26 }}
+          className="group inline-flex items-center gap-3 border border-foreground/20 px-7 py-3.5 font-mono text-sm uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-colors disabled:opacity-60"
         >
-          <ScrambleTextOnHover text="Find My Plan" as="span" duration={0.6} />
+          <ScrambleTextOnHover text={submitting ? "Loading…" : "Find My Plan"} as="span" duration={0.6} />
           <BitmapChevron className="transition-transform duration-[400ms] ease-in-out group-hover:rotate-45" />
-        </button>
+        </motion.button>
       </div>
       {error && (
-        <span className="font-mono text-xs text-destructive" role="alert">
+        <motion.span
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="font-mono text-xs text-destructive"
+          role="alert"
+        >
           {error}
-        </span>
+        </motion.span>
       )}
     </form>
   );

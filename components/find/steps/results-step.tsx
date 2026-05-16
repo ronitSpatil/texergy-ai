@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { WizardState } from "@/components/find/wizard-types";
 import { SectionLabel } from "@/components/ui/section-label";
 import { PlanCard } from "@/components/find/plan-card";
@@ -19,6 +20,9 @@ export function ResultsStep({
   const [data, setData] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  // Mobile/tablet: sidebar starts closed and opens via the Refine toggle.
+  // `lg:` overrides force the panel always-visible on desktop.
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Serialize the meaningful inputs so re-fetch triggers only when something
   // ranking-relevant changes (and not on, say, stepIndex).
@@ -77,8 +81,46 @@ export function ResultsStep({
               : ""}
       </p>
 
+      {/* Mobile/tablet: Refine toggle. Hidden on lg+ where the sidebar is
+          always visible. */}
+      <div className="lg:hidden mb-6">
+        <button
+          type="button"
+          onClick={() => setSidebarOpen((v) => !v)}
+          aria-expanded={sidebarOpen}
+          aria-controls="results-refine-panel"
+          className="w-full flex items-center justify-between border border-foreground/20 px-5 py-3 font-mono text-xs uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-colors"
+        >
+          <span>{sidebarOpen ? "Hide" : "Refine"} preferences</span>
+          <motion.span
+            animate={{ rotate: sidebarOpen ? 180 : 0 }}
+            transition={{ duration: 0.22 }}
+            aria-hidden="true"
+            className="text-accent"
+          >
+            ▾
+          </motion.span>
+        </button>
+        <AnimatePresence initial={false}>
+          {sidebarOpen && (
+            <motion.div
+              id="results-refine-panel"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="pt-6">
+                <ResultsSidebar state={state} onUpdate={onUpdate} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
       <div className="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-12">
-        <aside className="lg:sticky lg:top-8 lg:self-start">
+        <aside className="hidden lg:block lg:sticky lg:top-8 lg:self-start">
           <ResultsSidebar state={state} onUpdate={onUpdate} />
           <div className="mt-8 pt-6 border-t border-border/40">
             <button
@@ -110,14 +152,39 @@ export function ResultsStep({
               No plans match those criteria. Try relaxing some filters in the sidebar.
             </div>
           ) : (
-            <ol className="space-y-4">
+            <motion.ol
+              className="space-y-4"
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } },
+              }}
+            >
               {data?.ranked.map((r, i) => (
-                <li key={r.plan.id}>
+                <motion.li
+                  key={r.plan.id}
+                  variants={{
+                    hidden: { opacity: 0, y: 12 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.32, ease: [0.22, 1, 0.36, 1] } },
+                  }}
+                >
                   <PlanCard rank={i + 1} ranked={r} />
-                </li>
+                </motion.li>
               ))}
-            </ol>
+            </motion.ol>
           )}
+
+          {/* Mobile back-link mirrors the desktop sidebar's footer link. */}
+          <div className="lg:hidden mt-8 pt-6 border-t border-border/40">
+            <button
+              type="button"
+              onClick={onBack}
+              className="font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ← Back to {state.mode === "smart" ? "weights" : "profile"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
