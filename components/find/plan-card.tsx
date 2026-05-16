@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { RankedPlan } from "@/lib/ranking/types";
 
 export function PlanCard({ rank, ranked }: { rank: number; ranked: RankedPlan }) {
@@ -71,36 +72,46 @@ export function PlanCard({ rank, ranked }: { rank: number; ranked: RankedPlan })
         </div>
       </button>
 
-      {open && (
-        <div className="border-t border-border/60 px-5 md:px-6 py-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            <ScoreBars breakdown={ranked.breakdown} />
-            <Details ranked={ranked} />
-          </div>
-          <div className="mt-6 pt-6 border-t border-border/60 flex flex-col sm:flex-row gap-3">
-            {plan.efl_url && (
-              <a
-                href={plan.efl_url}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="border border-foreground/25 px-5 py-2.5 font-mono text-xs uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-colors text-center"
-              >
-                View EFL (PDF) →
-              </a>
-            )}
-            {plan.enroll_url && (
-              <a
-                href={plan.enroll_url}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="border border-foreground bg-foreground text-background px-5 py-2.5 font-mono text-xs uppercase tracking-widest hover:bg-accent hover:text-accent-foreground hover:border-accent transition-colors text-center"
-              >
-                Enroll at {plan.rep_name} →
-              </a>
-            )}
-          </div>
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden border-t border-border/60"
+          >
+            <div className="px-5 md:px-6 py-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <ScoreBars breakdown={ranked.breakdown} />
+                <Details ranked={ranked} />
+              </div>
+              <div className="mt-6 pt-6 border-t border-border/60 flex flex-col sm:flex-row gap-3">
+                {plan.efl_url && (
+                  <a
+                    href={plan.efl_url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="border border-foreground/25 px-5 py-2.5 font-mono text-xs uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-colors text-center"
+                  >
+                    View EFL (PDF) →
+                  </a>
+                )}
+                {plan.enroll_url && (
+                  <a
+                    href={plan.enroll_url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="border border-foreground bg-foreground text-background px-5 py-2.5 font-mono text-xs uppercase tracking-widest hover:bg-accent hover:text-accent-foreground hover:border-accent transition-colors text-center"
+                  >
+                    Enroll at {plan.rep_name} →
+                  </a>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </article>
   );
 }
@@ -134,15 +145,21 @@ function ScoreBars({ breakdown }: { breakdown: import("@/lib/ranking/types").Bre
         Score breakdown
       </div>
       <ul className="space-y-2">
-        {factors.map((f) => {
+        {factors.map((f, idx) => {
           const v = breakdown[f.key];
           return (
             <li key={f.key} className="flex items-center gap-3">
               <span className="font-mono text-xs text-muted-foreground w-24">{f.label}</span>
               <div className="flex-1 h-1.5 bg-muted/40 relative">
-                <div
+                <motion.div
                   className="absolute inset-y-0 left-0 bg-accent"
-                  style={{ width: `${Math.round(v * 100)}%` }}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.round(v * 100)}%` }}
+                  transition={{
+                    duration: 0.55,
+                    delay: 0.08 + idx * 0.05,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
                 />
               </div>
               <span className="font-mono text-xs text-foreground tabular-nums w-8 text-right">
