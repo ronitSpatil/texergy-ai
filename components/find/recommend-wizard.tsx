@@ -19,7 +19,7 @@ export function RecommendWizard() {
 
   // If someone lands here without a valid ZIP, kick them back to /find.
   useEffect(() => {
-    if (!/^\d{5}$/.test(zipFromUrl)) router.replace("/find");
+    if (!/^\d{5}$/.test(zipFromUrl)) router.replace("/");
   }, [zipFromUrl, router]);
 
   const [state, setState] = useState<WizardState>(() => ({
@@ -65,7 +65,7 @@ export function RecommendWizard() {
         <div className="flex items-center justify-between gap-6">
           <button
             type="button"
-            onClick={() => router.push("/find")}
+            onClick={() => router.push("/")}
             className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition-colors"
           >
             ← Texergy AI
