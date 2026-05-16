@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "waitlist:list": "node scripts/list-waitlist.mjs",
     "waitlist:csv": "node scripts/list-waitlist.mjs --csv",
-    "waitlist:json": "node scripts/list-waitlist.mjs --json"
+    "waitlist:json": "node scripts/list-waitlist.mjs --json",
+    "ingest:plans": "node scripts/ingest-plans.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
