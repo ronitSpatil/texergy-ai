@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { WizardState } from "@/components/find/wizard-types";
+import type { SortBy, WizardState } from "@/components/find/wizard-types";
+import { SORT_OPTIONS } from "@/components/find/wizard-types";
 import { SectionLabel } from "@/components/ui/section-label";
 import { PlanCard } from "@/components/find/plan-card";
 import { ResultsSidebar } from "@/components/find/results-sidebar";
@@ -35,9 +36,25 @@ export function ResultsStep({
         rate: state.rateTypePref,
         renew: state.renewablePref,
         term: state.termPref,
+        tou: state.timeOfUsePref,
+        base: state.baseChargePref,
+        etf: state.etfPref,
+        providers: state.providerIds,
         w: state.weights,
       }),
-    [state.zip, state.mode, state.monthlyUsageKwh, state.rateTypePref, state.renewablePref, state.termPref, state.weights],
+    [
+      state.zip,
+      state.mode,
+      state.monthlyUsageKwh,
+      state.rateTypePref,
+      state.renewablePref,
+      state.termPref,
+      state.timeOfUsePref,
+      state.baseChargePref,
+      state.etfPref,
+      state.providerIds,
+      state.weights,
+    ],
   );
 
   const fetchRecommendations = useCallback(async () => {
@@ -65,6 +82,32 @@ export function ResultsStep({
     fetchRecommendations();
   }, [fetchRecommendations]);
 
+  // Client-side sort: applied on top of the server-ranked list. "score" keeps
+  // the engine's order; everything else does a numeric ascending sort using
+  // fields already present on each RankedPlan. Plans missing the sort field
+  // sink to the bottom so the visible list stays predictable.
+  const sortedRanked = useMemo(() => {
+    if (!data) return [];
+    if (state.sortBy === "score") return data.ranked;
+    const sorted = [...data.ranked];
+    const keyFn: (r: (typeof sorted)[number]) => number = (() => {
+      switch (state.sortBy) {
+        case "rate":
+          return (r) => r.effectiveCentsPerKwh;
+        case "term":
+          return (r) => r.plan.term_months ?? Number.POSITIVE_INFINITY;
+        case "bill":
+          return (r) => r.estMonthlyBillUsd;
+        case "etf":
+          return (r) => r.plan.etf_amount ?? Number.POSITIVE_INFINITY;
+        default:
+          return () => 0;
+      }
+    })();
+    sorted.sort((a, b) => keyFn(a) - keyFn(b));
+    return sorted;
+  }, [data, state.sortBy]);
+
   return (
     <div className="max-w-7xl mx-auto">
       <SectionLabel className="block mb-4">Your matches</SectionLabel>
@@ -77,7 +120,7 @@ export function ResultsStep({
           : error
             ? "Couldn't load matches."
             : data
-              ? `${data.candidateCount} plans available in ${data.tduCodes.join(", ") || "your area"} · showing top ${data.ranked.length}`
+              ? `${data.ranked.length} plans available in ${data.tduCodes.join(", ") || "your area"}`
               : ""}
       </p>
 
@@ -147,32 +190,97 @@ export function ResultsStep({
             </div>
           ) : loading ? (
             <LoadingSkeleton />
+          ) : data && (data.tduCodes.length === 0 || data.candidateCount === 0) ? (
+            <div className="border border-border p-8 font-mono text-sm text-muted-foreground">
+              <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-accent mb-3">
+                Out of service area
+              </div>
+              <p className="text-foreground text-base leading-relaxed mb-3">
+                ZIP {state.zip} isn&apos;t in a deregulated Texas electricity market.
+              </p>
+              <p className="leading-relaxed">
+                Texergy AI works only for ZIPs served by an ERCOT retail provider
+                (i.e. you can choose your supplier). Regulated areas like Austin
+                Energy, CPS Energy, and electric co-ops aren&apos;t covered.
+              </p>
+            </div>
           ) : data && data.ranked.length === 0 ? (
             <div className="border border-border p-6 font-mono text-sm text-muted-foreground">
-              No plans match those criteria. Try relaxing some filters in the sidebar.
+              No plans match those criteria. Try relaxing a filter in the sidebar.
             </div>
           ) : (
-            <motion.ol
-              className="space-y-4"
-              initial="hidden"
-              animate="show"
-              variants={{
-                hidden: {},
-                show: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } },
-              }}
-            >
-              {data?.ranked.map((r, i) => (
-                <motion.li
-                  key={r.plan.id}
+            <>
+            <div className="mb-3 flex items-center justify-end gap-3">
+              <label htmlFor="sort-by" className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                Sort by
+              </label>
+              <select
+                id="sort-by"
+                value={state.sortBy}
+                onChange={(e) => onUpdate({ sortBy: e.target.value as SortBy })}
+                className="bg-background border border-foreground/25 px-3 py-1.5 font-mono text-xs text-foreground focus:outline-none focus:border-accent transition-colors"
+              >
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Fixed-height scroll container so the wizard header stays visible
+                and the user scrolls within the list instead of the whole page.
+                Wraps the scroller in a relative parent so we can layer top/bottom
+                gradient fades that hint at more content above/below the fold. */}
+            <div className="relative border border-border/40 bg-background/40">
+              <div
+                // data-lenis-prevent tells the site-wide Lenis smooth-scroll
+                // wrapper to leave wheel/touch events for this element alone,
+                // so two-finger trackpad scrolling actually reaches the
+                // container instead of getting swallowed by the page scroller.
+                data-lenis-prevent="true"
+                className="results-scroller max-h-[calc(100vh-280px)] overflow-y-auto overscroll-contain"
+                tabIndex={0}
+                aria-label={`${sortedRanked.length} plan results — scroll to browse`}
+              >
+                <motion.ol
+                  className="divide-y divide-border/40"
+                  initial="hidden"
+                  animate="show"
                   variants={{
-                    hidden: { opacity: 0, y: 12 },
-                    show: { opacity: 1, y: 0, transition: { duration: 0.32, ease: [0.22, 1, 0.36, 1] } },
+                    hidden: {},
+                    show: { transition: { staggerChildren: 0.03, delayChildren: 0.05 } },
                   }}
                 >
-                  <PlanCard rank={i + 1} ranked={r} />
-                </motion.li>
-              ))}
-            </motion.ol>
+                  {sortedRanked.map((r, i) => (
+                    <motion.li
+                      key={r.plan.id}
+                      variants={{
+                        hidden: { opacity: 0, y: 10 },
+                        show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } },
+                      }}
+                    >
+                      <PlanCard rank={i + 1} ranked={r} />
+                    </motion.li>
+                  ))}
+                </motion.ol>
+              </div>
+              {/* Edge fades — purely decorative, hint at content above/below
+                  the current scroll position. pointer-events-none so they
+                  don't block clicks or scrolling. */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-background/90 to-transparent"
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-background/95 to-transparent"
+              />
+              {/* Footer indicator that scrolling exists. */}
+              <div className="border-t border-border/40 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground text-center">
+                ↕ Scroll within · {sortedRanked.length} plans
+              </div>
+            </div>
+            </>
           )}
 
           {/* Mobile back-link mirrors the desktop sidebar's footer link. */}

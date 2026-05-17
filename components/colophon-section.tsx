@@ -122,7 +122,9 @@ export function ColophonSection() {
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
               Press <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
-            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">Partner With Us</li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="mailto:ronit@texergy.ai?subject=Partnership%20with%20Texergy%20AI" className="hover:text-accent transition-colors duration-200">Partner With Us</a>
+            </li>
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
               <a href="mailto:hello@texergy.ai" className="hover:text-accent transition-colors duration-200">Support</a>
             </li>
@@ -156,19 +158,27 @@ export function ColophonSection() {
           <h4 className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-5">Shop Electricity</h4>
           <ul className="space-y-2">
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
-              Service Areas <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+              <a href="/service-areas" className="hover:text-accent transition-colors">
+                Service Areas
+              </a>
             </li>
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
-              Residential Plans <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+              <a href="/#hero" className="hover:text-accent transition-colors">
+                Residential Plans
+              </a>
             </li>
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
               Commercial Plans <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
-              Electricity Providers <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+              <a href="/electricity-providers" className="hover:text-accent transition-colors">
+                Electricity Providers
+              </a>
             </li>
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
-              Electric Utilities <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+              <a href="/electric-utilities" className="hover:text-accent transition-colors">
+                Electric Utilities
+              </a>
             </li>
           </ul>
         </div>

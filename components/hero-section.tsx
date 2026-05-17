@@ -42,7 +42,7 @@ export function HeroSection() {
       <AnimatedNoise opacity={0.03} />
 
       {/* Left vertical labels */}
-      <div className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2">
+      <div className="hidden md:block absolute left-4 md:left-6 top-1/2 -translate-y-1/2">
         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground -rotate-90 origin-left block whitespace-nowrap">
           TEXAS
         </span>
@@ -73,7 +73,7 @@ export function HeroSection() {
           </span>
         </p>
 
-        <div className="mt-16 flex flex-wrap items-center gap-8">
+        <div className={`flex flex-wrap items-center gap-8 ${IS_PRODUCT_MODE ? "mt-8 justify-center" : "mt-16"}`}>
           {IS_PRODUCT_MODE ? (
             <HeroZipForm />
           ) : (
@@ -85,12 +85,14 @@ export function HeroSection() {
               <BitmapChevron className="transition-transform duration-[400ms] ease-in-out group-hover:rotate-45" />
             </a>
           )}
-          <a
-            href="#signals"
-            className="font-mono text-sm uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors duration-200"
-          >
-            How It Works
-          </a>
+          {!IS_PRODUCT_MODE && (
+            <a
+              href="#signals"
+              className="font-mono text-sm uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors duration-200"
+            >
+              How It Works
+            </a>
+          )}
         </div>
       </div>
 
