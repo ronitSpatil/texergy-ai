@@ -63,6 +63,12 @@ export type Filters = Partial<{
   excludePrepaid: boolean;
   maxMonthlyBill: number;
   timeOfUseOnly: boolean;
+  /** Exclude any plan with time_of_use=true. Mutually exclusive with
+   *  timeOfUseOnly — caller should set only one. */
+  excludeTimeOfUse: boolean;
+  /** Restrict candidates to this set of REP (rep_id) ids. Empty/undefined =
+   *  no restriction. */
+  providerIds: number[];
   /** Cap on base charge in $/mo. 0 = "$0 base charge only". Plans with no
    *  parsed base_charge (NULL) are included as a benefit-of-the-doubt. */
   maxBaseCharge: number;
@@ -85,6 +91,20 @@ export type Breakdown = {
   contractFlexibility: number;
   rateStability: number;
   ratings: number;
+  /** Optional sub-feature blended into `cost`: how far below the trailing
+   *  EIA TX-residential average this plan is. 0..1 where 1 = ≥20% below avg.
+   *  Null when no market context was available. */
+  marketDelta: number | null;
+};
+
+/** Trailing market context derived from EIA. Passed into scoreAndRank so each
+ *  plan can be compared against a real, time-anchored baseline instead of just
+ *  the local candidate set. Null = degrade gracefully (no market signal). */
+export type MarketContext = {
+  trailingAvgCents: number;
+  trailingStdCents: number;
+  trailing6moSlopeCentsPerMonth: number;
+  latestPeriod: string | null;
 };
 
 export type CreditAssessment = {

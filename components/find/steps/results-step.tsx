@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { WizardState } from "@/components/find/wizard-types";
+import type { SortBy, WizardState } from "@/components/find/wizard-types";
+import { SORT_OPTIONS } from "@/components/find/wizard-types";
 import { SectionLabel } from "@/components/ui/section-label";
 import { PlanCard } from "@/components/find/plan-card";
 import { ResultsSidebar } from "@/components/find/results-sidebar";
@@ -38,6 +39,7 @@ export function ResultsStep({
         tou: state.timeOfUsePref,
         base: state.baseChargePref,
         etf: state.etfPref,
+        providers: state.providerIds,
         w: state.weights,
       }),
     [
@@ -50,6 +52,7 @@ export function ResultsStep({
       state.timeOfUsePref,
       state.baseChargePref,
       state.etfPref,
+      state.providerIds,
       state.weights,
     ],
   );
@@ -78,6 +81,32 @@ export function ResultsStep({
   useEffect(() => {
     fetchRecommendations();
   }, [fetchRecommendations]);
+
+  // Client-side sort: applied on top of the server-ranked list. "score" keeps
+  // the engine's order; everything else does a numeric ascending sort using
+  // fields already present on each RankedPlan. Plans missing the sort field
+  // sink to the bottom so the visible list stays predictable.
+  const sortedRanked = useMemo(() => {
+    if (!data) return [];
+    if (state.sortBy === "score") return data.ranked;
+    const sorted = [...data.ranked];
+    const keyFn: (r: (typeof sorted)[number]) => number = (() => {
+      switch (state.sortBy) {
+        case "rate":
+          return (r) => r.effectiveCentsPerKwh;
+        case "term":
+          return (r) => r.plan.term_months ?? Number.POSITIVE_INFINITY;
+        case "bill":
+          return (r) => r.estMonthlyBillUsd;
+        case "etf":
+          return (r) => r.plan.etf_amount ?? Number.POSITIVE_INFINITY;
+        default:
+          return () => 0;
+      }
+    })();
+    sorted.sort((a, b) => keyFn(a) - keyFn(b));
+    return sorted;
+  }, [data, state.sortBy]);
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -180,10 +209,28 @@ export function ResultsStep({
               No plans match those criteria. Try relaxing a filter in the sidebar.
             </div>
           ) : (
-            // Fixed-height scroll container so the wizard header stays visible
-            // and the user scrolls within the list instead of the whole page.
-            // Wraps the scroller in a relative parent so we can layer top/bottom
-            // gradient fades that hint at more content above/below the fold.
+            <>
+            <div className="mb-3 flex items-center justify-end gap-3">
+              <label htmlFor="sort-by" className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                Sort by
+              </label>
+              <select
+                id="sort-by"
+                value={state.sortBy}
+                onChange={(e) => onUpdate({ sortBy: e.target.value as SortBy })}
+                className="bg-background border border-foreground/25 px-3 py-1.5 font-mono text-xs text-foreground focus:outline-none focus:border-accent transition-colors"
+              >
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Fixed-height scroll container so the wizard header stays visible
+                and the user scrolls within the list instead of the whole page.
+                Wraps the scroller in a relative parent so we can layer top/bottom
+                gradient fades that hint at more content above/below the fold. */}
             <div className="relative border border-border/40 bg-background/40">
               <div
                 // data-lenis-prevent tells the site-wide Lenis smooth-scroll
@@ -193,7 +240,7 @@ export function ResultsStep({
                 data-lenis-prevent="true"
                 className="results-scroller max-h-[calc(100vh-280px)] overflow-y-auto overscroll-contain"
                 tabIndex={0}
-                aria-label={`${data?.ranked.length ?? 0} plan results — scroll to browse`}
+                aria-label={`${sortedRanked.length} plan results — scroll to browse`}
               >
                 <motion.ol
                   className="divide-y divide-border/40"
@@ -204,7 +251,7 @@ export function ResultsStep({
                     show: { transition: { staggerChildren: 0.03, delayChildren: 0.05 } },
                   }}
                 >
-                  {data?.ranked.map((r, i) => (
+                  {sortedRanked.map((r, i) => (
                     <motion.li
                       key={r.plan.id}
                       variants={{
@@ -230,9 +277,10 @@ export function ResultsStep({
               />
               {/* Footer indicator that scrolling exists. */}
               <div className="border-t border-border/40 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground text-center">
-                ↕ Scroll within · {data?.ranked.length ?? 0} plans
+                ↕ Scroll within · {sortedRanked.length} plans
               </div>
             </div>
+            </>
           )}
 
           {/* Mobile back-link mirrors the desktop sidebar's footer link. */}

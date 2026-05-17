@@ -33,6 +33,8 @@ export function RecommendWizard() {
     timeOfUsePref: "any",
     baseChargePref: "any",
     etfPref: "any",
+    providerIds: [],
+    sortBy: "score",
     weights: {
       cost: 50,
       renewable: 10,

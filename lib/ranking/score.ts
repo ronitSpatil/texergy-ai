@@ -1,6 +1,7 @@
 import { assessBillCredits, estimateMonthlyBill } from "./cost.ts";
 import {
   type Breakdown,
+  type MarketContext,
   type PlanForScoring,
   type RankedPlan,
   type Weights,
@@ -20,6 +21,7 @@ export function scoreAndRank(
   usageKwh: number,
   weights: Weights,
   limit: number,
+  market: MarketContext | null = null,
 ): RankedPlan[] {
   const w = normalizeWeights(weights);
   if (candidates.length === 0) return [];
@@ -67,11 +69,29 @@ export function scoreAndRank(
   };
 
   // Rate stability: Fixed > Indexed > Variable, by user-research convention.
+  // Variable plans are now scored against *real* historical volatility (EIA TX
+  // residential trailing-12-month std-dev / avg) when available. Calm market
+  // → Variable scores closer to Indexed; volatile market → drops toward 0.2.
+  // CoV scaling: 0% → 0.65, 5% → 0.40, ≥15% → 0.20.
+  const cov = market ? market.trailingStdCents / Math.max(1e-6, market.trailingAvgCents) : null;
+  const variableScore = cov == null ? 0.25 : Math.max(0.2, 0.65 - cov * 3);
   const stabilityScore = (rt: PlanForScoring["rate_type"]) => {
     if (rt === "Fixed") return 1;
     if (rt === "Indexed") return 0.5;
-    if (rt === "Variable") return 0.25;
+    if (rt === "Variable") return variableScore;
     return 0.5; // unknown — neutral
+  };
+
+  // Market-anchored cost signal: how far below the EIA TX trailing-12mo avg is
+  // this plan's effective cents/kWh? Output 0..1 where 1 = ≥20% below avg, 0 =
+  // at-or-above avg. Blended into the cost score at 20% weight below so it
+  // nudges genuinely below-market plans up without overwhelming the relative
+  // (within-TDU) cost normalization.
+  const marketDeltaScore = (effectiveCents: number): number | null => {
+    if (!market || market.trailingAvgCents <= 0) return null;
+    const ratio = (market.trailingAvgCents - effectiveCents) / market.trailingAvgCents;
+    if (ratio <= 0) return 0;
+    return Math.min(1, ratio / 0.2);
   };
 
   // Ratings: placeholder neutral 0.5. We strip JD Power because it's stale
@@ -81,12 +101,20 @@ export function scoreAndRank(
 
   // ----- Composite + reasons -----
   const ranked: RankedPlan[] = priced.map((r) => {
+    const effectiveCentsPerKwh = usageKwh > 0 ? Math.round((r.monthlyUsd / usageKwh) * 1000) / 10 : 0;
+    const md = marketDeltaScore(effectiveCentsPerKwh);
+    // Blend market delta (vs. EIA trailing avg) into the cost score at 20%.
+    // Falls back to pure relative-cost when no market context is available.
+    const relCost = costScore(r.monthlyUsd);
+    const blendedCost = md == null ? relCost : 0.8 * relCost + 0.2 * md;
+
     const breakdown: Breakdown = {
-      cost: costScore(r.monthlyUsd),
+      cost: blendedCost,
       renewable: renewScore(r.renewablePct),
       contractFlexibility: flexScore(r.etfUsd, r.termMonths),
       rateStability: stabilityScore(r.rateType),
       ratings: ratingScore(r.plan),
+      marketDelta: md,
     };
 
     const composite =
@@ -96,7 +124,6 @@ export function scoreAndRank(
       breakdown.rateStability * w.rateStability +
       breakdown.ratings * w.ratings;
 
-    const effectiveCentsPerKwh = usageKwh > 0 ? Math.round((r.monthlyUsd / usageKwh) * 1000) / 10 : 0;
     const creditAssessment = assessBillCredits(usageKwh, r.plan.bill_credits);
     return {
       plan: r.plan,
@@ -107,7 +134,7 @@ export function scoreAndRank(
       costSource: r.costSource,
       creditAssessment,
       breakdown,
-      reasons: buildReasons(r.plan, r.monthlyUsd, breakdown, minCost, maxCost, creditAssessment),
+      reasons: buildReasons(r.plan, r.monthlyUsd, breakdown, minCost, maxCost, creditAssessment, market, effectiveCentsPerKwh),
     };
   });
 
@@ -144,12 +171,11 @@ function buildReasons(
   minCost: number,
   maxCost: number,
   credit: import("./types.ts").CreditAssessment | null,
+  market: MarketContext | null,
+  effectiveCentsPerKwh: number,
 ): string[] {
   const reasons: string[] = [];
-  const savingsVsAvg = (maxCost + minCost) / 2 - monthlyUsd;
-  if (savingsVsAvg > 5) {
-    reasons.push(`~$${Math.round(savingsVsAvg)}/mo less than the average plan in your area`);
-  }
+
   if (plan.renewable_pct != null && plan.renewable_pct >= 80) {
     reasons.push(`${plan.renewable_pct}% renewable energy`);
   }

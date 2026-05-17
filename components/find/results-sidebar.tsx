@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import type {
   BaseChargePref,
   EtfPref,
@@ -90,6 +91,7 @@ export function ResultsSidebar({
           options={[
             { value: "any", label: "Any" },
             { value: "only", label: "ToU only" },
+            { value: "none", label: "No ToU" },
           ]}
           onChange={(v) => onUpdate({ timeOfUsePref: v as TimeOfUsePref })}
         />
@@ -118,6 +120,13 @@ export function ResultsSidebar({
             { value: "atmost200", label: "≤$200" },
           ]}
           onChange={(v) => onUpdate({ etfPref: v as EtfPref })}
+        />
+      </Block>
+
+      <Block label="Provider">
+        <ProviderMultiSelect
+          selectedIds={state.providerIds}
+          onChange={(ids) => onUpdate({ providerIds: ids })}
         />
       </Block>
 
@@ -167,6 +176,125 @@ function Chips({
           {o.label}
         </button>
       ))}
+    </div>
+  );
+}
+
+/** Multi-select dropdown of REPs that have at least one active plan. Fetches
+ *  the list once on mount from /api/providers. Click-outside closes the panel. */
+function ProviderMultiSelect({
+  selectedIds,
+  onChange,
+}: {
+  selectedIds: number[];
+  onChange: (ids: number[]) => void;
+}) {
+  const [providers, setProviders] = useState<{ id: number; name: string }[]>([]);
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/providers")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled || !data) return;
+        setProviders(Array.isArray(data.providers) ? data.providers : []);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  const selectedSet = new Set(selectedIds);
+  const filtered = query.trim()
+    ? providers.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))
+    : providers;
+
+  function toggle(id: number) {
+    const next = selectedSet.has(id)
+      ? selectedIds.filter((x) => x !== id)
+      : [...selectedIds, id];
+    onChange(next);
+  }
+
+  const label =
+    selectedIds.length === 0
+      ? "All providers"
+      : selectedIds.length === 1
+        ? providers.find((p) => p.id === selectedIds[0])?.name ?? "1 selected"
+        : `${selectedIds.length} selected`;
+
+  return (
+    <div className="relative" ref={wrapperRef}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="w-full flex items-center justify-between border border-foreground/25 px-3 py-2 font-mono text-xs text-foreground hover:border-accent transition-colors"
+      >
+        <span className="truncate text-left">{label}</span>
+        <span className={`ml-2 text-accent transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true">
+          ▾
+        </span>
+      </button>
+      {open && (
+        <div className="absolute z-20 mt-1 w-full max-h-72 overflow-y-auto border border-foreground/25 bg-background shadow-lg">
+          <div className="sticky top-0 bg-background border-b border-border/40 p-2">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search…"
+              className="w-full bg-transparent border border-foreground/20 px-2 py-1 font-mono text-[11px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-accent"
+            />
+            {selectedIds.length > 0 && (
+              <button
+                type="button"
+                onClick={() => onChange([])}
+                className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-accent transition-colors"
+              >
+                Clear ({selectedIds.length})
+              </button>
+            )}
+          </div>
+          <ul className="divide-y divide-border/30">
+            {filtered.length === 0 ? (
+              <li className="px-3 py-3 font-mono text-[11px] text-muted-foreground">No matches.</li>
+            ) : (
+              filtered.map((p) => {
+                const checked = selectedSet.has(p.id);
+                return (
+                  <li key={p.id}>
+                    <label className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-accent/5">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggle(p.id)}
+                        className="accent-accent shrink-0"
+                      />
+                      <span className="font-mono text-[11px] text-foreground truncate">{p.name}</span>
+                    </label>
+                  </li>
+                );
+              })
+            )}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

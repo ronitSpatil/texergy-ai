@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { recommend } from "@/lib/ranking/recommend";
 import { recommendSchema } from "@/lib/validation";
+import { getMonthlyAverageKwh } from "@/lib/usage-baseline";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,9 +46,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const usageKwh = parsed.data.monthlyUsageKwh ?? (await getMonthlyAverageKwh("TX"));
     const result = await recommend({
       zip: parsed.data.zip,
-      monthlyUsageKwh: parsed.data.monthlyUsageKwh ?? 1000,
+      monthlyUsageKwh: usageKwh,
       weights: parsed.data.weights,
       filters: parsed.data.filters,
       limit: parsed.data.limit,

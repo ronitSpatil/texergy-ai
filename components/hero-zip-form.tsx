@@ -15,6 +15,9 @@ export function HeroZipForm() {
   const [zip, setZip] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // Customer class is residential-only today. Commercial is shown as a
+  // disabled "Soon" affordance so business visitors see it's on the roadmap.
+  const customerClass = "residential" as const;
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -58,31 +61,57 @@ export function HeroZipForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate aria-label="Enter your ZIP code" className="flex flex-col gap-3">
-      {/* Customer class toggle — only Residential is wired today.
-          Commercial is shown as a disabled "coming soon" affordance so
-          business visitors know it's on the roadmap without us faking
-          a recommendation flow we can't honestly back up yet. */}
-      <div role="radiogroup" aria-label="Customer class" className="flex items-center gap-2">
-        <span
+    <form
+      onSubmit={onSubmit}
+      noValidate
+      aria-label="Enter your ZIP code"
+      className="relative w-full max-w-2xl mx-auto flex flex-col gap-6 border border-foreground/15 bg-background/20 backdrop-blur-[2px] p-9 md:p-12"
+    >
+      <div className="flex items-center justify-between gap-4">
+        <span className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          Get Started
+        </span>
+        <a
+          href="#signals"
+          className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-accent transition-colors"
+        >
+          How It Works
+        </a>
+      </div>
+
+      {/* Customer class toggle — only Residential is wired today, but Commercial
+          is still selectable so business visitors can express intent. Submitting
+          while Commercial is selected surfaces a graceful "in development" notice
+          rather than routing into the residential flow. */}
+      <div role="radiogroup" aria-label="Customer class" className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
           role="radio"
-          aria-checked="true"
-          className="font-mono text-[10px] uppercase tracking-[0.25em] border border-accent text-accent px-3 py-1.5 cursor-default"
+          aria-checked={true}
+          className="relative text-center font-mono text-[11px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.25em] px-2 sm:px-5 py-2.5 border border-accent text-accent cursor-default"
         >
           Residential
-        </span>
-        <span
+          <span className="ml-1.5 text-[8px] sm:text-[9px] tracking-[0.2em] text-accent align-middle">
+            · Beta
+          </span>
+        </button>
+        <button
+          type="button"
           role="radio"
           aria-checked="false"
           aria-disabled="true"
-          className="font-mono text-[10px] uppercase tracking-[0.25em] border border-foreground/15 text-muted-foreground/70 px-3 py-1.5 cursor-not-allowed select-none"
-          title="Business plan support is in development."
+          disabled
+          className="relative text-center font-mono text-[11px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.25em] px-2 sm:px-5 py-2.5 border border-foreground/15 text-muted-foreground/60 cursor-not-allowed select-none"
+          title="Commercial plans are in development."
         >
-          Commercial <span className="ml-1 text-foreground/40">· Coming Soon</span>
-        </span>
+          Commercial
+          <span className="ml-1.5 text-[8px] sm:text-[9px] tracking-[0.2em] text-muted-foreground/50 align-middle">
+            · Soon
+          </span>
+        </button>
       </div>
 
-      <div className="flex items-stretch gap-3">
+      <div className="flex flex-col sm:flex-row items-stretch gap-3">
         <label htmlFor="hero-zip-input" className="sr-only">
           ZIP code
         </label>
@@ -91,7 +120,7 @@ export function HeroZipForm() {
           inputMode="numeric"
           autoComplete="postal-code"
           maxLength={5}
-          placeholder="ZIP"
+          placeholder="ENTER ZIP"
           value={zip}
           onChange={(e) => {
             setZip(e.target.value.replace(/\D/g, "").slice(0, 5));
@@ -99,7 +128,7 @@ export function HeroZipForm() {
           }}
           aria-invalid={error != null}
           disabled={submitting}
-          className="w-32 bg-transparent border border-foreground/20 px-4 py-3.5 font-mono text-sm tracking-widest uppercase text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-accent transition-colors disabled:opacity-60"
+          className="flex-1 min-w-0 sm:w-52 sm:flex-none bg-background/60 border border-foreground/25 px-6 py-5 font-mono text-lg tracking-[0.3em] uppercase text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-accent focus:bg-background transition-colors disabled:opacity-60"
         />
         <motion.button
           type="submit"
@@ -107,22 +136,25 @@ export function HeroZipForm() {
           whileHover={!submitting ? { scale: 1.02 } : undefined}
           whileTap={!submitting ? { scale: 0.98 } : undefined}
           transition={{ type: "spring", stiffness: 380, damping: 26 }}
-          className="group inline-flex items-center gap-3 border border-foreground/20 px-7 py-3.5 font-mono text-sm uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-colors disabled:opacity-60"
+          className="group inline-flex items-center justify-center gap-3 flex-1 border border-foreground/30 px-8 py-5 font-mono text-base uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-colors disabled:opacity-60"
         >
           <ScrambleTextOnHover text={submitting ? "Loading…" : "Find My Plan"} as="span" duration={0.6} />
           <BitmapChevron className="transition-transform duration-[400ms] ease-in-out group-hover:rotate-45" />
         </motion.button>
       </div>
-      {error && (
-        <motion.span
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="font-mono text-xs text-destructive"
-          role="alert"
-        >
-          {error}
-        </motion.span>
-      )}
+      <div className="min-h-[1.25rem] -mt-2" aria-live="polite">
+        {error && (
+          <motion.span
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="block font-mono text-xs text-destructive leading-relaxed"
+            role="alert"
+          >
+            {error}
+          </motion.span>
+        )}
+      </div>
     </form>
   );
 }

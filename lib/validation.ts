@@ -44,6 +44,8 @@ export const recommendSchema = z.object({
       excludePrepaid: z.boolean().optional(),
       maxMonthlyBill: z.number().min(0).optional(),
       timeOfUseOnly: z.boolean().optional(),
+      excludeTimeOfUse: z.boolean().optional(),
+      providerIds: z.array(z.number().int()).max(100).optional(),
       maxBaseCharge: z.number().min(0).max(50).optional(),
       maxEtf: z.number().min(0).max(1000).optional(),
     })

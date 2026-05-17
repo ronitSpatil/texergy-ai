@@ -40,6 +40,9 @@ export function buildRecommendBody(state: WizardState): RecommendBody {
     state.etfPref,
     state.mode === "basic",
   );
+  if (state.providerIds && state.providerIds.length > 0) {
+    filters.providerIds = [...state.providerIds];
+  }
   if (Object.keys(filters).length > 0) body.filters = filters;
 
   if (state.mode === "smart") {
@@ -82,6 +85,7 @@ function buildFilters(
   }
 
   if (tou === "only") out.timeOfUseOnly = true;
+  else if (tou === "none") out.excludeTimeOfUse = true;
 
   if (base === "zero") out.maxBaseCharge = 0;
   else if (base === "atmost5") out.maxBaseCharge = 5;

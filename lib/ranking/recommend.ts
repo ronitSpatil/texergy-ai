@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { scoreAndRank } from "./score.ts";
+import { readPriceHistory, toMarketContext } from "../price-history.ts";
 import {
   type Filters,
   type PlanForScoring,
@@ -47,8 +48,13 @@ export async function recommend(input: RecommendInput): Promise<{
   // --- Load candidate plans ------------------------------------------------
   const candidates = await loadCandidates(supabase, tduIds, filters);
 
+  // --- Market context (EIA TX residential history) ------------------------
+  // Loaded once per request; gracefully degrades to null when the table is
+  // empty so scoring still works in fresh / test environments.
+  const market = toMarketContext(await readPriceHistory("TX", "RES"));
+
   // --- Score + rank --------------------------------------------------------
-  const ranked = scoreAndRank(candidates, usageKwh, input.weights ?? {}, limit);
+  const ranked = scoreAndRank(candidates, usageKwh, input.weights ?? {}, limit, market);
 
   const { data: tduRows } = await supabase
     .from("tdus")
@@ -142,6 +148,10 @@ async function loadCandidates(
   if (filters.prepaidOnly === true) query = query.eq("prepaid", true);
   if (filters.excludePrepaid === true) query = query.eq("prepaid", false);
   if (filters.timeOfUseOnly === true) query = query.eq("time_of_use", true);
+  if (filters.excludeTimeOfUse === true) query = query.eq("time_of_use", false);
+  if (filters.providerIds && filters.providerIds.length > 0) {
+    query = query.in("rep_id", filters.providerIds);
+  }
 
   const { data, error } = await query;
   if (error) throw error;

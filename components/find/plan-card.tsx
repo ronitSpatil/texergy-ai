@@ -214,7 +214,7 @@ function ScoreBars({ breakdown }: { breakdown: import("@/lib/ranking/types").Bre
       </div>
       <ul className="space-y-2">
         {factors.map((f, idx) => {
-          const v = breakdown[f.key];
+          const v = breakdown[f.key] ?? 0;
           return (
             <li key={f.key} className="flex items-center gap-3">
               <span className="font-mono text-xs text-muted-foreground w-24">{f.label}</span>
