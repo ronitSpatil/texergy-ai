@@ -5,7 +5,7 @@ import { SectionLabel } from "@/components/ui/section-label"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
-const IS_PRODUCT_MODE = process.env.NEXT_PUBLIC_APP_MODE === "product"
+const IS_PRODUCT_MODE = process.env.NEXT_PUBLIC_APP_MODE !== "waitlist"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -28,7 +28,7 @@ export function ColophonSection() {
           ease: "power3.out",
           scrollTrigger: {
             trigger: headerRef.current,
-            start: "top 85%",
+            start: "top bottom",
             toggleActions: "play none none reverse",
           },
         })
@@ -45,7 +45,7 @@ export function ColophonSection() {
           ease: "power3.out",
           scrollTrigger: {
             trigger: gridRef.current,
-            start: "top 85%",
+            start: "top bottom",
             toggleActions: "play none none reverse",
           },
         })
@@ -74,13 +74,15 @@ export function ColophonSection() {
     <section
       ref={sectionRef}
       id="colophon"
-      className="relative pt-32 pb-10 md:pb-12 pl-6 md:pl-28 pr-6 md:pr-12 border-t border-border/30"
+      className={`relative pb-10 md:pb-12 pl-6 md:pl-28 pr-6 md:pr-12 border-t border-border/30 ${IS_PRODUCT_MODE ? "pt-12 md:pt-14" : "pt-32"}`}
     >
-      {/* Section header */}
-      <div ref={headerRef} className="mb-16">
-        <SectionLabel>07 / Coming soon</SectionLabel>
-        <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">TEXERGY AI</h2>
-      </div>
+      {/* Section header — hidden in product mode since "Coming soon" no longer fits. */}
+      {!IS_PRODUCT_MODE && (
+        <div ref={headerRef} className="mb-16">
+          <SectionLabel>07 / Coming soon</SectionLabel>
+          <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">TEXERGY AI</h2>
+        </div>
+      )}
 
       {/* Multi-column layout */}
       <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-10 md:gap-x-10 lg:gap-x-6 xl:gap-x-10">

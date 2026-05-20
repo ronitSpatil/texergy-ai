@@ -20,7 +20,7 @@ const SECTIONS: Section[] = [
   { id: "deregulation", label: "Deregulation", title: "WHAT ‘DEREGULATED’ MEANS" },
   { id: "three-actors", label: "Three actors", title: "THE THREE ACTORS ON YOUR BILL" },
   { id: "ercot", label: "ERCOT", title: "ERCOT, THE TEXAS GRID OPERATOR" },
-  { id: "plan-types", label: "Plan types", title: "PLAN TYPES: FIXED, VARIABLE, INDEXED" },
+  { id: "plan-types", label: "Plan types", title: "PLAN TYPES: FIXED VS. VARIABLE" },
   { id: "efl", label: "EFL", title: "THE EFL: THE ONLY COMPARABLE DOCUMENT" },
   { id: "1000kwh-trap", label: "1000 kWh", title: "THE 1000 kWh AVERAGE-RATE PROBLEM" },
   { id: "bill-credits", label: "Bill credits", title: "BILL CREDITS AND PROMOS" },
@@ -212,7 +212,7 @@ export default function TexasEnergy101Page() {
               cents per kWh; during scarcity events it can reach the
               regulatory cap of $5,000/MWh ($5/kWh) and stay there for hours.
               REPs hedge against these spikes. If you&apos;re on a fixed plan,
-              you don&apos;t see them. If you&apos;re on an indexed plan or a
+              you don&apos;t see them. If you&apos;re on a variable or
               wholesale-passthrough plan, you do.
             </P>
           </div>
@@ -223,8 +223,9 @@ export default function TexasEnergy101Page() {
           <SectionHeader id="plan-types" eyebrow="04" title={SECTIONS[3].title} />
           <div className="space-y-4">
             <P>
-              Every plan falls into one of three rate-type categories. Power
-              to Choose labels them explicitly, and so does every EFL.
+              In practice every Texas retail plan is either fixed or variable.
+              Power to Choose labels each plan explicitly, and so does every
+              EFL.
             </P>
             <dl className="space-y-5 mt-4">
               <div>
@@ -252,19 +253,6 @@ export default function TexasEnergy101Page() {
                     that climbs quietly. No contract length and no ETF. Fine
                     for someone moving in 60 days; risky for someone who&apos;ll
                     forget about it.
-                  </P>
-                </dd>
-              </div>
-              <div>
-                <dt className="font-mono text-xs uppercase tracking-[0.2em] text-foreground mb-1">
-                  Indexed
-                </dt>
-                <dd>
-                  <P>
-                    Your rate follows a formula tied to wholesale prices or a
-                    published index. Can be cheaper in mild months and very
-                    expensive during heatwaves or cold snaps. Worth avoiding
-                    unless you understand the index and your own usage well.
                   </P>
                 </dd>
               </div>

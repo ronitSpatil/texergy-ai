@@ -8,10 +8,12 @@ import { ModeStep } from "@/components/find/steps/mode-step";
 import { QuestionsStep } from "@/components/find/steps/questions-step";
 import { WeightsStep } from "@/components/find/steps/weights-step";
 import { ResultsStep } from "@/components/find/steps/results-step";
+import { UploadStep } from "@/components/find/steps/upload-step";
 import type { Mode, WizardState } from "@/components/find/wizard-types";
 
 const STEPS_SMART = ["MODE", "PROFILE", "WEIGHTS", "MATCH"] as const;
 const STEPS_BASIC = ["MODE", "PROFILE", "MATCH"] as const;
+const STEPS_METER = ["MODE", "UPLOAD", "MATCH"] as const;
 
 export function RecommendWizard() {
   const router = useRouter();
@@ -37,16 +39,19 @@ export function RecommendWizard() {
     providerIds: [],
     sortBy: "score",
     weights: {
-      cost: 50,
+      cost: 40,
       renewable: 10,
       contractFlexibility: 15,
       rateStability: 15,
       ratings: 10,
+      historicalPricing: 10,
+      weatherForecast: 0,
     },
     stepIndex: 0,
   }));
 
-  const steps = state.mode === "basic" ? STEPS_BASIC : STEPS_SMART;
+  const steps =
+    state.mode === "basic" ? STEPS_BASIC : state.mode === "meter" ? STEPS_METER : STEPS_SMART;
   const currentStep = steps[state.stepIndex] ?? steps[0];
 
   function setMode(mode: Mode) {
@@ -99,6 +104,15 @@ export function RecommendWizard() {
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           {currentStep === "MODE" && <ModeStep onSelect={setMode} />}
+
+          {currentStep === "UPLOAD" && (
+            <UploadStep
+              monthlyUsageKwh={state.monthlyUsageKwh}
+              onParsed={(kwh) => setState((s) => ({ ...s, monthlyUsageKwh: kwh }))}
+              onBack={goBack}
+              onNext={goNext}
+            />
+          )}
 
           {currentStep === "PROFILE" && (
             <QuestionsStep

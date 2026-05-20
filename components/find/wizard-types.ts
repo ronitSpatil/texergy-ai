@@ -1,6 +1,6 @@
-export type Mode = "smart" | "basic";
+export type Mode = "smart" | "basic" | "meter";
 
-export type RateTypePref = "any" | "Fixed" | "Variable" | "Indexed";
+export type RateTypePref = "any" | "Fixed" | "Variable";
 export type RenewablePref = "any" | "atleast50" | "atleast90" | "only100";
 export type TermPref = "any" | "monthToMonth" | "short" | "medium" | "long";
 export type TimeOfUsePref = "any" | "only" | "none";
@@ -38,6 +38,8 @@ export type WeightsUI = {
   contractFlexibility: number;
   rateStability: number;
   ratings: number;
+  historicalPricing: number;
+  weatherForecast: number;
 };
 
 export type WizardState = {

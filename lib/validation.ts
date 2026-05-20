@@ -56,7 +56,7 @@ export const recommendSchema = z.object({
     .optional(),
   filters: z
     .object({
-      rateType: z.enum(["Fixed", "Variable", "Indexed"]).optional(),
+      rateType: z.enum(["Fixed", "Variable"]).optional(),
       minRenewablePct: z.number().int().min(0).max(100).optional(),
       maxTermMonths: z.number().int().min(0).max(120).optional(),
       prepaidOnly: z.boolean().optional(),

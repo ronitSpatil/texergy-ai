@@ -91,7 +91,6 @@ export function QuestionsStep({
               { value: "any", label: "Any" },
               { value: "Fixed", label: "Fixed" },
               { value: "Variable", label: "Variable" },
-              { value: "Indexed", label: "Indexed" },
             ]}
           />
         </Field>
