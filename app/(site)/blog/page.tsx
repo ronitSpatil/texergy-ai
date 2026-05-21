@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import NewsletterForm from "@/components/NewsletterForm";
 
 export const metadata: Metadata = {
-  title: "Blog — Texergy AI",
+  title: "Blog | Texergy AI",
   description: "Field notes on the Texas electricity market.",
 };
 

@@ -14,7 +14,6 @@ import { revalidatePath } from "next/cache";
 import { verifyCronRequest } from "@/lib/cron-auth";
 import { runIngestPlans } from "@/lib/jobs/ingest-plans";
 import { runSnapshotPrices } from "@/lib/jobs/snapshot-prices";
-import { runParseEflsChanged } from "@/lib/jobs/parse-efls";
 import { Deadline, getServiceClient } from "@/lib/jobs/supabase";
 
 // Footer directory pages that depend on ingested plans/reps/tdus. Switched
@@ -42,10 +41,21 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "could not create cron_runs row", detail: runErr.message }, { status: 500 });
   }
 
-  const overall = new Deadline(55_000);
+  // 45s leaves 15s for bookkeeping + Vercel's own shutdown overhead, which
+  // matters on the Hobby tier where the function is hard-killed at 60s.
+  const overall = new Deadline(45_000);
   const result: Record<string, unknown> = {};
   let status: "ok" | "partial" | "error" = "ok";
   let errorMessage: string | undefined;
+
+  // Write partial state after each phase so that if the function later gets
+  // hard-killed we still know which step finished.
+  async function checkpoint() {
+    await supabase
+      .from("cron_runs")
+      .update({ status, result })
+      .eq("id", run.id);
+  }
 
   try {
     // 1. Ingest — bulk of the time on a normal day.
@@ -59,6 +69,7 @@ export async function GET(req: Request) {
       for (const path of REVALIDATE_PATHS) revalidatePath(path);
       result.revalidated = REVALIDATE_PATHS;
     }
+    await checkpoint();
 
     // 2. Snapshot — fast, runs even if budget is tight.
     if (!overall.expired(500)) {
@@ -67,16 +78,11 @@ export async function GET(req: Request) {
       result.snapshot = { skipped: "deadline_exceeded" };
       status = "partial";
     }
+    await checkpoint();
 
-    // 3. Parse changed EFLs — whatever fits in the remaining budget.
-    if (!overall.expired(5_000)) {
-      const parse = await runParseEflsChanged({ deadline: overall });
-      result.parse = parse;
-      if (parse.skipped_for_time > 0) status = "partial";
-    } else {
-      result.parse = { skipped: "deadline_exceeded" };
-      status = "partial";
-    }
+    // EFL parsing (Tier A) lives on the weekly cron now. On Hobby's 60s
+    // budget, daily ingest consumes the whole window, and the daily parse
+    // phase was never actually getting to run.
   } catch (err) {
     status = "error";
     errorMessage = err instanceof Error ? err.message : String(err);

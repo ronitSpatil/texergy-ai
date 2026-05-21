@@ -1,5 +1,7 @@
-// Weekly cron — Tier B (LlamaParse) on plans where Tier A failed AND the
-// fact_sheet URL has changed since the last LlamaParse attempt.
+// Weekly cron — runs Tier-A EFL parsing on plans with changed URLs, then
+// Tier B (LlamaParse) on whatever Tier A couldn't extract. Lives on the
+// weekly schedule because the daily cron's 60s Hobby budget is consumed by
+// ingest, and parsing isn't time-critical (plan terms don't move fast).
 //
 // URL-change gating prevents us from burning LlamaParse credits re-submitting
 // the same broken URLs every week. A failed attempt still stamps
@@ -7,6 +9,7 @@
 
 import { NextResponse } from "next/server";
 import { verifyCronRequest } from "@/lib/cron-auth";
+import { runParseEflsChanged } from "@/lib/jobs/parse-efls";
 import { runLlamaParseChanged } from "@/lib/jobs/parse-efls-llamaparse";
 import { Deadline, getServiceClient } from "@/lib/jobs/supabase";
 
@@ -33,14 +36,35 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "could not create cron_runs row", detail: runErr.message }, { status: 500 });
   }
 
-  const deadline = new Deadline(55_000);
+  // 45s leaves 15s for bookkeeping + Vercel's own shutdown overhead.
+  const deadline = new Deadline(45_000);
+  const result: Record<string, unknown> = {};
   let status: "ok" | "partial" | "error" = "ok";
-  let result: unknown = null;
   let errorMessage: string | undefined;
 
+  async function checkpoint() {
+    await supabase.from("cron_runs").update({ status, result }).eq("id", run.id);
+  }
+
   try {
-    result = await runLlamaParseChanged({ deadline });
-    if ((result as { skipped_for_time?: number }).skipped_for_time && (result as { skipped_for_time: number }).skipped_for_time > 0) {
+    // 1. Tier A first — fast in-process parser. Skips plans Tier A already
+    //    handled OR whose URL hasn't changed since the last attempt.
+    const tierA = await runParseEflsChanged({ deadline });
+    result.tier_a = tierA;
+    if (tierA.skipped_for_time > 0) status = "partial";
+    await checkpoint();
+
+    // 2. Tier B — LlamaParse on plans Tier A couldn't extract. Whatever
+    //    remains of the budget. This is the credit-burning step so any
+    //    saved time goes here.
+    if (!deadline.expired(5_000)) {
+      const tierB = await runLlamaParseChanged({ deadline });
+      result.tier_b = tierB;
+      if ((tierB as { skipped_for_time?: number }).skipped_for_time && (tierB as { skipped_for_time: number }).skipped_for_time > 0) {
+        status = "partial";
+      }
+    } else {
+      result.tier_b = { skipped: "deadline_exceeded" };
       status = "partial";
     }
   } catch (err) {
@@ -53,10 +77,10 @@ export async function GET(req: Request) {
     .update({
       finished_at: new Date().toISOString(),
       status,
-      result: result as Record<string, unknown> | null,
+      result,
       error_message: errorMessage ?? null,
     })
     .eq("id", run.id);
 
-  return NextResponse.json({ status, runId: run.id, result });
+  return NextResponse.json({ status, runId: run.id, ...result });
 }

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
 
 export const metadata: Metadata = {
-  title: "Electricity Providers — Texergy AI",
+  title: "Electricity Providers | Texergy AI",
   description:
     "Texas retail electricity providers (REPs) currently in Texergy AI's dataset, with plan counts and links to each company.",
 };

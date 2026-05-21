@@ -72,8 +72,10 @@ export function RecommendWizard() {
   if (!/^\d{5}$/.test(zipFromUrl)) return null;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-border/50 px-6 md:px-12 py-6">
+    <div className="relative min-h-screen">
+      <div className="grid-bg fixed inset-0 opacity-30" aria-hidden="true" />
+
+      <header className="fixed inset-x-0 top-0 z-30 border-b border-border/50 bg-background/90 px-6 py-6 backdrop-blur-md md:px-12">
         <div className="flex items-center justify-between gap-6">
           <button
             type="button"
@@ -86,12 +88,26 @@ export function RecommendWizard() {
             ZIP <span className="text-foreground">{state.zip}</span>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={() => router.push("/")}
+          aria-label="Back to Texergy AI home"
+          className="absolute left-1/2 top-4 inline-flex size-10 -translate-x-1/2 items-center justify-center transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+        >
+          <span className="inline-flex size-9 items-center justify-center rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
+            <img
+              src="/logo.svg"
+              alt="Texergy AI"
+              className="size-[25px]"
+            />
+          </span>
+        </button>
         <div className="mt-6">
           <ProgressBar steps={progress} />
         </div>
       </header>
 
-      <div className="flex-1 px-6 md:px-12 py-12 overflow-x-clip">
+      <div className="relative z-10 px-6 pb-12 pt-[152px] md:px-12">
         {/* The key prop on motion.div forces a fresh mount on every step
             change, which lets each step play its enter animation. We drop
             AnimatePresence + exit animations because the mode="wait" pattern

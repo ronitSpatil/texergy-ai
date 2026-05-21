@@ -69,6 +69,7 @@ export function ResultsSidebar({
           value={state.renewablePref}
           options={[
             { value: "any", label: "Any" },
+            { value: "atleast25", label: "25%+" },
             { value: "atleast50", label: "50%+" },
             { value: "atleast90", label: "90%+" },
             { value: "only100", label: "100" },
@@ -171,9 +172,9 @@ function CollapsibleBlock({
         <span>{label}</span>
         <span
           aria-hidden="true"
-          className={`inline-flex h-4 w-4 items-center justify-center text-accent transition-transform duration-300 ${open ? "rotate-45" : ""}`}
+          className={`inline-flex h-3 w-3 items-center justify-center text-accent transition-transform duration-300 ${open ? "rotate-45" : ""}`}
         >
-          <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+          <svg width="9" height="9" viewBox="0 0 14 14" fill="none">
             <path
               d="M7 1.5v11M1.5 7h11"
               stroke="currentColor"

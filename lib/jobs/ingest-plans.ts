@@ -257,7 +257,15 @@ export async function runIngestPlans(opts: {
         }
       }
 
+      let aborted = false;
       for (const plan of plans) {
+        // Yield to the deadline mid-TDU. Without this, a single TDU's plan
+        // list (hundreds of upserts) can blow past the budget and starve
+        // the cleanup / bookkeeping phase that follows ingest.
+        if (opts.deadline?.expired(2_000)) {
+          aborted = true;
+          break;
+        }
         counts.plans_seen++;
         const planTduCode = ptcTduNameToCode(plan.company_tdu_name);
         if (planTduCode !== code) continue; // mis-attributed plan (ZIP straddles TDUs); skip.
@@ -267,6 +275,7 @@ export async function runIngestPlans(opts: {
         if (result === "inserted") counts.plans_inserted++;
         else counts.plans_updated++;
       }
+      if (aborted) break;
     }
 
     // Soft-delete plans within successful TDUs that we didn't see this run.
