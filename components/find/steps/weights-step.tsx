@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { WeightsUI } from "@/components/find/wizard-types";
 import { SectionLabel } from "@/components/ui/section-label";
 import { WizardFooter } from "@/components/find/wizard-footer";
@@ -16,41 +16,64 @@ const FACTORS: { key: keyof WeightsUI; label: string; blurb: string }[] = [
   { key: "billTransparency",    label: "Bill transparency", blurb: "Favors plans whose bill stays close to the advertised rate — penalizes bill credits, minimum-usage fees, and steep tier cliffs between 500/1000/2000 kWh." },
 ];
 
-const PRESETS: { id: string; label: string; weights: WeightsUI }[] = [
-  {
-    id: "balanced",
-    label: "Balanced",
-    weights: { cost: 35, renewable: 10, contractFlexibility: 10, rateStability: 15, billTransparency: 10, historicalPricing: 10, weatherForecast: 10 },
-  },
-  {
-    id: "cheapest",
-    label: "Cheapest",
-    weights: { cost: 60, renewable: 5, contractFlexibility: 5, rateStability: 5, billTransparency: 5, historicalPricing: 10, weatherForecast: 10 },
-  },
-  {
-    id: "greenest",
-    label: "Greenest",
-    weights: { cost: 25, renewable: 45, contractFlexibility: 5, rateStability: 5, billTransparency: 5, historicalPricing: 10, weatherForecast: 5 },
-  },
-  {
-    id: "flexible",
-    label: "Most Flexible",
-    weights: { cost: 30, renewable: 5, contractFlexibility: 40, rateStability: 5, billTransparency: 5, historicalPricing: 10, weatherForecast: 5 },
-  },
-  {
-    id: "stable",
-    label: "Most Stable",
-    weights: { cost: 20, renewable: 5, contractFlexibility: 5, rateStability: 40, billTransparency: 5, historicalPricing: 10, weatherForecast: 15 },
-  },
-];
+const BALANCED: WeightsUI = { cost: 35, renewable: 10, contractFlexibility: 10, rateStability: 15, billTransparency: 10, historicalPricing: 10, weatherForecast: 10 };
+
+type QuizAnswers = {
+  billStyle: "lowest" | "predictable" | "longterm" | null;
+  contractLength: "lock" | "flexible" | "any" | null;
+  renewable: "green" | "nice" | "any" | null;
+  avoid: ("credits" | "swings" | "longlock")[];
+  spikes: "shield" | "any" | null;
+};
+
+const EMPTY_QUIZ: QuizAnswers = {
+  billStyle: null,
+  contractLength: null,
+  renewable: null,
+  avoid: [],
+  spikes: null,
+};
+
+function deriveWeights(a: QuizAnswers): WeightsUI {
+  const w: WeightsUI = { ...BALANCED };
+  switch (a.billStyle) {
+    case "lowest":      w.cost += 20; break;
+    case "predictable": w.billTransparency += 15; w.rateStability += 5; break;
+    case "longterm":    w.rateStability += 15; w.weatherForecast += 10; break;
+  }
+  switch (a.contractLength) {
+    case "lock":     w.contractFlexibility = Math.max(0, w.contractFlexibility - 5); w.rateStability += 5; break;
+    case "flexible": w.contractFlexibility += 15; break;
+    case "any":      w.cost += 5; break;
+  }
+  switch (a.renewable) {
+    case "green": w.renewable += 25; break;
+    case "nice":  w.renewable += 10; break;
+  }
+  for (const tag of a.avoid) {
+    if (tag === "credits")  w.billTransparency += 10;
+    if (tag === "swings")   { w.rateStability += 10; w.weatherForecast += 5; }
+    if (tag === "longlock") w.contractFlexibility += 10;
+  }
+  if (a.spikes === "shield") w.weatherForecast += 15;
+  return normalize(w);
+}
+
+function normalize(w: WeightsUI): WeightsUI {
+  const total = Object.values(w).reduce((s, v) => s + v, 0);
+  if (total === 0) return BALANCED;
+  const scaled = (Object.keys(w) as (keyof WeightsUI)[]).reduce((acc, k) => {
+    acc[k] = Math.round((w[k] / total) * 100);
+    return acc;
+  }, {} as WeightsUI);
+  const diff = 100 - Object.values(scaled).reduce((s, v) => s + v, 0);
+  scaled.cost += diff;
+  return scaled;
+}
 
 function clampWeight(value: number) {
   if (!Number.isFinite(value)) return 0;
   return Math.min(100, Math.max(0, Math.round(value)));
-}
-
-function weightsEqual(a: WeightsUI, b: WeightsUI): boolean {
-  return (Object.keys(a) as (keyof WeightsUI)[]).every((k) => a[k] === b[k]);
 }
 
 export function WeightsStep({
@@ -64,45 +87,267 @@ export function WeightsStep({
   onBack: () => void;
   onNext: () => void;
 }) {
-  const [selectedPreset, setSelectedPreset] = useState<string>("none");
-  const matchedPreset = PRESETS.find((p) => weightsEqual(p.weights, weights))?.id;
-  // If the user changed sliders after picking a preset, drop back to none.
-  const activePreset = selectedPreset !== "none" && matchedPreset === selectedPreset ? selectedPreset : "none";
+  const [mode, setMode] = useState<"quiz" | "sliders">("quiz");
+  const [quiz, setQuiz] = useState<QuizAnswers>(EMPTY_QUIZ);
+  const derived = useMemo(() => deriveWeights(quiz), [quiz]);
+
+  function patchQuiz(p: Partial<QuizAnswers>) {
+    setQuiz((q) => ({ ...q, ...p }));
+  }
+  function toggleAvoid(tag: QuizAnswers["avoid"][number]) {
+    setQuiz((q) => ({
+      ...q,
+      avoid: q.avoid.includes(tag) ? q.avoid.filter((t) => t !== tag) : [...q.avoid, tag],
+    }));
+  }
+  function commitQuizAndNext() {
+    onChange(derived);
+    onNext();
+  }
+  function switchToSliders() {
+    onChange(derived);
+    setMode("sliders");
+  }
+
+  if (mode === "sliders") {
+    return (
+      <SliderMode
+        weights={weights}
+        onChange={onChange}
+        onBack={() => setMode("quiz")}
+        onNext={onNext}
+      />
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto">
-      <SectionLabel className="block mb-4">What matters to you</SectionLabel>
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <SectionLabel className="block">What matters to you</SectionLabel>
+        <button
+          type="button"
+          onClick={switchToSliders}
+          className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground hover:text-accent transition-colors"
+        >
+          Customize sliders →
+        </button>
+      </div>
+      <h2 className="font-[family-name:var(--font-bebas)] text-foreground text-[clamp(2.5rem,5vw,4rem)] leading-[0.95] tracking-tight mb-2">
+        FIVE QUICK <span className="text-accent">CALLS.</span>
+      </h2>
+      <p className="font-mono text-sm text-muted-foreground mb-10 max-w-2xl">
+        Tell us what to optimize for. We weight the ranking from your answers — skip any you don&apos;t feel strongly about.
+      </p>
+
+      <div className="space-y-10">
+        <QuizQ
+          number="01"
+          title="What matters most about your bill?"
+          options={[
+            { id: "lowest",      label: "Lowest total" },
+            { id: "predictable", label: "Predictable, no surprises" },
+            { id: "longterm",    label: "Long-term certainty" },
+          ]}
+          value={quiz.billStyle}
+          onSelect={(v) => patchQuiz({ billStyle: v as QuizAnswers["billStyle"] })}
+        />
+
+        <QuizQ
+          number="02"
+          title="Contract length?"
+          options={[
+            { id: "lock",     label: "Lock me in" },
+            { id: "flexible", label: "Keep me flexible" },
+            { id: "any",      label: "Whatever's cheapest" },
+          ]}
+          value={quiz.contractLength}
+          onSelect={(v) => patchQuiz({ contractLength: v as QuizAnswers["contractLength"] })}
+        />
+
+        <QuizQ
+          number="03"
+          title="How much does renewable energy matter?"
+          options={[
+            { id: "green", label: "100% green only" },
+            { id: "nice",  label: "Nice to have" },
+            { id: "any",   label: "Don't care" },
+          ]}
+          value={quiz.renewable}
+          onSelect={(v) => patchQuiz({ renewable: v as QuizAnswers["renewable"] })}
+        />
+
+        <QuizMultiQ
+          number="04"
+          title="Anything you specifically want to avoid?"
+          subtitle="Pick any that apply."
+          options={[
+            { id: "credits",  label: "Bill-credit thresholds" },
+            { id: "swings",   label: "Variable rates that swing" },
+            { id: "longlock", label: "Long lock-ins" },
+          ]}
+          values={quiz.avoid}
+          onToggle={(v) => toggleAvoid(v as QuizAnswers["avoid"][number])}
+        />
+
+        <QuizQ
+          number="05"
+          title="Worried about TX summer or winter price spikes?"
+          options={[
+            { id: "shield", label: "Yes, shield me" },
+            { id: "any",    label: "Not really" },
+          ]}
+          value={quiz.spikes}
+          onSelect={(v) => patchQuiz({ spikes: v as QuizAnswers["spikes"] })}
+        />
+      </div>
+
+      <DerivedPreview weights={derived} />
+
+      <WizardFooter onBack={onBack} onNext={commitQuizAndNext} nextLabel="See matches →" />
+    </div>
+  );
+}
+
+function QuizQ({
+  number,
+  title,
+  options,
+  value,
+  onSelect,
+}: {
+  number: string;
+  title: string;
+  options: { id: string; label: string }[];
+  value: string | null;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <div className="border-t border-border/40 pt-6">
+      <div className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent mb-3">
+        {number} / {title}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {options.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            onClick={() => onSelect(o.id)}
+            className={`border px-4 py-2 font-mono text-xs uppercase tracking-widest transition-colors ${
+              value === o.id
+                ? "border-accent text-accent"
+                : "border-foreground/25 text-muted-foreground hover:border-foreground/50 hover:text-foreground"
+            }`}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function QuizMultiQ({
+  number,
+  title,
+  subtitle,
+  options,
+  values,
+  onToggle,
+}: {
+  number: string;
+  title: string;
+  subtitle?: string;
+  options: { id: string; label: string }[];
+  values: string[];
+  onToggle: (id: string) => void;
+}) {
+  return (
+    <div className="border-t border-border/40 pt-6">
+      <div className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">
+        {number} / {title}
+      </div>
+      {subtitle && <p className="mt-1 font-mono text-xs text-muted-foreground">{subtitle}</p>}
+      <div className="mt-3 flex flex-wrap gap-2">
+        {options.map((o) => {
+          const active = values.includes(o.id);
+          return (
+            <button
+              key={o.id}
+              type="button"
+              onClick={() => onToggle(o.id)}
+              className={`border px-4 py-2 font-mono text-xs uppercase tracking-widest transition-colors ${
+                active
+                  ? "border-accent text-accent"
+                  : "border-foreground/25 text-muted-foreground hover:border-foreground/50 hover:text-foreground"
+              }`}
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function DerivedPreview({ weights }: { weights: WeightsUI }) {
+  const rows = (Object.keys(weights) as (keyof WeightsUI)[]).map((k) => ({
+    key: k,
+    label: FACTORS.find((f) => f.key === k)?.label ?? k,
+    value: weights[k],
+  }));
+  rows.sort((a, b) => b.value - a.value);
+  return (
+    <div className="mt-12 border-t border-border/40 pt-6">
+      <div className="font-mono text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
+        Your derived weights
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+        {rows.map((r) => (
+          <div key={r.key} className="flex items-center gap-3">
+            <div className="flex-1 font-mono text-xs text-foreground">{r.label}</div>
+            <div className="h-1.5 flex-[2] bg-foreground/10">
+              <div className="h-full bg-accent" style={{ width: `${Math.min(100, r.value * 2)}%` }} />
+            </div>
+            <div className="w-10 text-right font-mono text-[11px] tabular-nums text-muted-foreground">
+              {r.value}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SliderMode({
+  weights,
+  onChange,
+  onBack,
+  onNext,
+}: {
+  weights: WeightsUI;
+  onChange: (w: WeightsUI) => void;
+  onBack: () => void;
+  onNext: () => void;
+}) {
+  return (
+    <div className="max-w-3xl mx-auto">
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <SectionLabel className="block">Customize weights</SectionLabel>
+        <button
+          type="button"
+          onClick={onBack}
+          className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground hover:text-accent transition-colors"
+        >
+          ← Back to quiz
+        </button>
+      </div>
       <h2 className="font-[family-name:var(--font-bebas)] text-foreground text-[clamp(2.5rem,5vw,4rem)] leading-[0.95] tracking-tight mb-2">
         DIAL IT <span className="text-accent">IN.</span>
       </h2>
       <p className="font-mono text-sm text-muted-foreground mb-6 max-w-2xl">
-        Pick a preset or move each slider yourself. We normalize the values so total weight always sums to 1.
+        Move each slider yourself. We normalize the values so total weight always sums to 1.
       </p>
-
-      <div className="mb-8 flex items-center gap-3">
-        <label htmlFor="weights-preset" className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-          Preset
-        </label>
-        <div className="relative">
-          <select
-            id="weights-preset"
-            value={activePreset}
-            onChange={(e) => {
-              const id = e.target.value;
-              setSelectedPreset(id);
-              const preset = PRESETS.find((p) => p.id === id);
-              if (preset) onChange(preset.weights);
-            }}
-            className="h-9 cursor-pointer appearance-none rounded-md border border-foreground/25 bg-background/60 pl-3 pr-9 font-mono text-xs uppercase tracking-[0.15em] text-foreground hover:border-foreground/40 focus:outline-none focus:ring-2 focus:ring-accent"
-          >
-            <option value="none">None</option>
-            {PRESETS.map((p) => (
-              <option key={p.id} value={p.id}>{p.label}</option>
-            ))}
-          </select>
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs text-muted-foreground">▾</span>
-        </div>
-      </div>
 
       <div className="space-y-8">
         {FACTORS.map((f) => (
