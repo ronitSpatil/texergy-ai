@@ -200,6 +200,9 @@ export function ColophonSection() {
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
               <a href="/privacy" className="hover:text-accent transition-colors duration-200">Privacy Policy</a>
             </li>
+            <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
+              <a href="/disclaimer" className="hover:text-accent transition-colors duration-200">Disclaimer</a>
+            </li>
           </ul>
         </div>
 

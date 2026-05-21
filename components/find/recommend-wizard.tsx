@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ProgressBar } from "@/components/find/progress-bar";
+import { ColophonSection } from "@/components/colophon-section";
 import { ModeStep } from "@/components/find/steps/mode-step";
 import { QuestionsStep } from "@/components/find/steps/questions-step";
 import { WeightsStep } from "@/components/find/steps/weights-step";
@@ -157,6 +158,8 @@ export function RecommendWizard() {
           )}
         </motion.div>
       </div>
+
+      {currentStep === "MATCH" && <ColophonSection />}
     </div>
   );
 }
