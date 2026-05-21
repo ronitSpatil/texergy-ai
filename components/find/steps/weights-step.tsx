@@ -13,7 +13,7 @@ const FACTORS: { key: keyof WeightsUI; label: string; blurb: string }[] = [
   { key: "rateStability",       label: "Rate preference",   blurb: "How much your preferred rate type should pull matches toward it." },
   { key: "historicalPricing",   label: "Historical pricing", blurb: "Favors plans priced below the EIA Texas residential trailing-12-month average." },
   { key: "weatherForecast",     label: "Seasonality",       blurb: "Favors Fixed plans whose term covers TX summer/winter price-spike windows; penalizes Variable plans for the same exposure." },
-  { key: "ratings",             label: "Ratings",           blurb: "Provider reputation (placeholder for now)." },
+  { key: "ratings",             label: "Ratings",           blurb: "Provider reputation from the PUC's complaint scorecard — lower complaint rate per 1,000 customers wins." },
 ];
 
 const PRESETS: { id: string; label: string; weights: WeightsUI }[] = [

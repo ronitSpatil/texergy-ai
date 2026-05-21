@@ -154,7 +154,7 @@ async function loadCandidates(
       time_of_use, simple_plan, new_customer_only, has_minimum_usage_fee,
       rate_500_kwh, rate_1000_kwh, rate_2000_kwh,
       efl_url, tos_url, yrac_url, enroll_url,
-      reps!inner ( id, name, logo_url ),
+      reps!inner ( id, name, logo_url, complaint_rate_per_1000 ),
       tdus!inner ( id, code ),
       plan_details ( base_charge, etf_amount, minimum_usage_fee, energy_charge, tdu_charges, bill_credits )
     `)
@@ -193,7 +193,7 @@ async function loadCandidates(
 }
 
 function rowToPlan(row: Record<string, unknown>): PlanForScoring {
-  const rep = (row.reps as { id: number; name: string; logo_url?: string | null } | null) ?? { id: 0, name: "", logo_url: null };
+  const rep = (row.reps as { id: number; name: string; logo_url?: string | null; complaint_rate_per_1000?: number | string | null } | null) ?? { id: 0, name: "", logo_url: null, complaint_rate_per_1000: null };
   const tdu = (row.tdus as { id: number; code: string } | null) ?? { id: 0, code: "" };
   // Supabase returns 1:1 relations as objects, 1:many as arrays. plan_details
   // is 1:1 (plan_id is both FK and PK), so it comes back as an object — handle
@@ -210,6 +210,7 @@ function rowToPlan(row: Record<string, unknown>): PlanForScoring {
     rep_id: rep.id,
     rep_name: rep.name,
     rep_logo_url: rep.logo_url ?? null,
+    rep_complaint_rate: parseNum(rep.complaint_rate_per_1000 ?? null),
     tdu_id: tdu.id,
     tdu_code: tdu.code,
     rate_type: normalizeRateType(row.rate_type as string | null),

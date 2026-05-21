@@ -12,6 +12,7 @@ export type PlanForScoring = {
   rep_id: number;
   rep_name: string;
   rep_logo_url: string | null;
+  rep_complaint_rate: number | null;
   tdu_id: number;
   tdu_code: string;
 

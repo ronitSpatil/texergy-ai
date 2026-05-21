@@ -121,10 +121,22 @@ export function scoreAndRank(
     return 0.5;
   };
 
-  // Ratings: placeholder neutral 0.5. We strip JD Power because it's stale
-  // (2012 vintage in some rows). Real signal will come from a future
-  // user-review aggregation table.
-  const ratingScore = (_plan: PlanForScoring) => 0.5;
+  // Ratings: derived from PUC complaint rate (complaints per 1,000 customers,
+  // 6-month rolling). Lower rate = better service = higher score. Normalized
+  // across the candidate set so the best REP among the matches lands at 1.0
+  // and the worst at 0.0. REPs without data fall back to neutral 0.5.
+  const complaintRates = priced
+    .map((r) => r.plan.rep_complaint_rate)
+    .filter((v): v is number => v != null && Number.isFinite(v));
+  const minComplaint = complaintRates.length > 0 ? Math.min(...complaintRates) : null;
+  const maxComplaint = complaintRates.length > 0 ? Math.max(...complaintRates) : null;
+  const complaintSpread = minComplaint != null && maxComplaint != null ? maxComplaint - minComplaint : 0;
+  const ratingScore = (plan: PlanForScoring): number => {
+    const rate = plan.rep_complaint_rate;
+    if (rate == null || minComplaint == null || maxComplaint == null) return 0.5;
+    if (complaintSpread === 0) return 0.5;
+    return 1 - (rate - minComplaint) / complaintSpread;
+  };
 
   // Device-based score tweaks. Modest by design — these are *priors*, not
   // hard filters. EV / battery owners benefit from off-peak rate windows, so

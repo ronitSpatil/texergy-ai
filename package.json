@@ -18,6 +18,7 @@
     "waitlist:json": "node scripts/list-waitlist.mjs --json",
     "ingest:plans": "node scripts/ingest-plans.mjs",
     "snapshot:prices": "node scripts/snapshot-prices.mjs",
+    "seed:rep-complaints": "node scripts/seed-rep-complaints.mjs",
     "fetch:eia-baseline": "node scripts/fetch-eia-baseline.mjs",
     "fetch:eia-prices": "node scripts/fetch-eia-prices.mjs",
     "parse:efls": "node scripts/parse-efls.mjs",
