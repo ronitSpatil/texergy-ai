@@ -71,7 +71,10 @@ export function RecommendWizard() {
   );
 
   useEffect(() => {
-    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "auto" });
+    if (typeof window === "undefined") return;
+    const lenis = (window as unknown as { __lenis?: { scrollTo: (t: number, o?: { immediate?: boolean }) => void } }).__lenis;
+    if (lenis) lenis.scrollTo(0, { immediate: true });
+    else window.scrollTo({ top: 0, behavior: "auto" });
   }, [state.stepIndex]);
 
   if (!/^\d{5}$/.test(zipFromUrl)) return null;
