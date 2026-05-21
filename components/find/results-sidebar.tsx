@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import type {
   BaseChargePref,
   EtfPref,
@@ -131,14 +132,155 @@ export function ResultsSidebar({
       </Block>
 
       {isSmart && (
-        <CollapsibleBlock label="Weights">
-          <WeightSliders
-            weights={state.weights}
-            onChange={(weights) => onUpdate({ weights })}
-          />
-        </CollapsibleBlock>
+        <EditWeightsButton
+          weights={state.weights}
+          onChange={(weights) => onUpdate({ weights })}
+        />
       )}
     </div>
+  );
+}
+
+function EditWeightsButton({
+  weights,
+  onChange,
+}: {
+  weights: WeightsUI;
+  onChange: (w: WeightsUI) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<WeightsUI>(weights);
+
+  function openDialog() {
+    setDraft(weights);
+    setOpen(true);
+  }
+  function save() {
+    onChange(draft);
+    setOpen(false);
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={openDialog}
+        className="w-full border border-foreground/25 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.25em] text-foreground hover:border-accent hover:text-accent transition-colors"
+      >
+        Edit weights →
+      </button>
+      <AnimatePresence>
+        {open && (
+          <EditWeightsDialog
+            draft={draft}
+            onDraftChange={setDraft}
+            onCancel={() => setOpen(false)}
+            onSave={save}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+function EditWeightsDialog({
+  draft,
+  onDraftChange,
+  onCancel,
+  onSave,
+}: {
+  draft: WeightsUI;
+  onDraftChange: (w: WeightsUI) => void;
+  onCancel: () => void;
+  onSave: () => void;
+}) {
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onCancel();
+    }
+    document.addEventListener("keydown", onKey);
+    const scrollY = window.scrollY;
+    const prev = {
+      htmlOverflow: document.documentElement.style.overflow,
+      bodyPosition: document.body.style.position,
+      bodyTop: document.body.style.top,
+      bodyWidth: document.body.style.width,
+    };
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.documentElement.style.overflow = prev.htmlOverflow;
+      document.body.style.position = prev.bodyPosition;
+      document.body.style.top = prev.bodyTop;
+      document.body.style.width = prev.bodyWidth;
+      window.scrollTo(0, scrollY);
+    };
+  }, [onCancel]);
+
+  return (
+    <motion.div
+      key="edit-weights-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm overflow-y-auto"
+      data-lenis-prevent="true"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Edit ranking weights"
+      onClick={onCancel}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 16 }}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className="min-h-screen flex items-center justify-center px-4 py-12"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="w-full max-w-lg border border-border bg-background p-6 md:p-8">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
+                Tune the ranker
+              </div>
+              <h2 className="mt-2 font-[var(--font-bebas)] text-3xl tracking-tight leading-none">
+                EDIT WEIGHTS.
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={onCancel}
+              className="border border-foreground/25 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-colors"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+          </div>
+          <WeightSliders weights={draft} onChange={onDraftChange} />
+          <div className="mt-8 flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={onSave}
+              className="border border-foreground bg-foreground text-background px-5 py-2 font-mono text-xs uppercase tracking-widest hover:bg-accent hover:border-accent transition-colors"
+            >
+              Apply
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -151,43 +293,6 @@ function Block({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function CollapsibleBlock({
-  label,
-  children,
-  defaultOpen = false,
-}: {
-  label: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div>
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="w-full flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-accent mb-3 hover:text-accent/70 transition-colors"
-      >
-        <span>{label}</span>
-        <span
-          aria-hidden="true"
-          className={`inline-flex h-3 w-3 items-center justify-center text-accent transition-transform duration-300 ${open ? "rotate-45" : ""}`}
-        >
-          <svg width="9" height="9" viewBox="0 0 14 14" fill="none">
-            <path
-              d="M7 1.5v11M1.5 7h11"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-            />
-          </svg>
-        </span>
-      </button>
-      {open && children}
-    </div>
-  );
-}
 
 function Chips({
   value,
@@ -347,7 +452,7 @@ const SLIDER_FACTORS: { key: keyof WeightsUI; label: string }[] = [
   { key: "rateStability", label: "Rate pref" },
   { key: "historicalPricing", label: "History" },
   { key: "weatherForecast", label: "Weather" },
-  { key: "ratings", label: "Rating" },
+  { key: "billTransparency", label: "Transparency" },
 ];
 
 function WeightSliders({

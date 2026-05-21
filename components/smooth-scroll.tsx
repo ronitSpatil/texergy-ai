@@ -21,6 +21,8 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     })
 
     lenisRef.current = lenis
+    // Expose so non-Lenis code (e.g. step-change scroll resets) can drive scroll.
+    ;(window as unknown as { __lenis?: Lenis }).__lenis = lenis
 
     // Connect Lenis to GSAP ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update)
@@ -34,6 +36,7 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     return () => {
       lenis.destroy()
       gsap.ticker.remove(lenis.raf)
+      delete (window as unknown as { __lenis?: Lenis }).__lenis
     }
   }, [])
 

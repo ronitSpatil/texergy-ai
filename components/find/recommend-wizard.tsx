@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ProgressBar } from "@/components/find/progress-bar";
+import { ColophonSection } from "@/components/colophon-section";
 import { ModeStep } from "@/components/find/steps/mode-step";
 import { QuestionsStep } from "@/components/find/steps/questions-step";
 import { WeightsStep } from "@/components/find/steps/weights-step";
@@ -39,13 +40,13 @@ export function RecommendWizard() {
     providerIds: [],
     sortBy: "score",
     weights: {
-      cost: 40,
+      cost: 35,
       renewable: 10,
-      contractFlexibility: 15,
+      contractFlexibility: 10,
       rateStability: 15,
-      ratings: 10,
+      billTransparency: 10,
       historicalPricing: 10,
-      weatherForecast: 0,
+      weatherForecast: 10,
     },
     stepIndex: 0,
   }));
@@ -68,6 +69,13 @@ export function RecommendWizard() {
     () => steps.map((label, idx) => ({ label, active: idx === state.stepIndex, done: idx < state.stepIndex })),
     [steps, state.stepIndex],
   );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const lenis = (window as unknown as { __lenis?: { scrollTo: (t: number, o?: { immediate?: boolean }) => void } }).__lenis;
+    if (lenis) lenis.scrollTo(0, { immediate: true });
+    else window.scrollTo({ top: 0, behavior: "auto" });
+  }, [state.stepIndex]);
 
   if (!/^\d{5}$/.test(zipFromUrl)) return null;
 
@@ -157,6 +165,8 @@ export function RecommendWizard() {
           )}
         </motion.div>
       </div>
+
+      {currentStep === "MATCH" && <ColophonSection />}
     </div>
   );
 }

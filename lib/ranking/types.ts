@@ -51,7 +51,7 @@ export type Weights = Partial<{
   renewable: number;
   contractFlexibility: number;
   rateStability: number;
-  ratings: number;
+  billTransparency: number;
   /** How much the plan beats the EIA TX-residential trailing-12mo average. */
   historicalPricing: number;
   /** Placeholder for seasonal / forecast-driven biasing. Neutral until the
@@ -100,7 +100,7 @@ export type Breakdown = {
   renewable: number;
   contractFlexibility: number;
   rateStability: number;
-  ratings: number;
+  billTransparency: number;
   /** Historical-pricing axis: how far below the EIA TX-residential trailing-12mo
    *  average this plan's effective rate is. 0..1 where 1 = ≥20% below avg.
    *  Falls back to 0.5 (neutral) when no market context is available, so the
@@ -121,6 +121,14 @@ export type MarketContext = {
   trailingStdCents: number;
   trailing6moSlopeCentsPerMonth: number;
   latestPeriod: string | null;
+};
+
+/** Per-month seasonal context for weatherForecast scoring. Indexed Jan=0..Dec=11.
+ *  Higher monthlyVolatilityWeights[i] = historically more expensive/volatile.
+ *  Derived from a hardcoded TX prior + EIA monthly aggregates. */
+export type SeasonalContext = {
+  monthlyVolatilityWeights: number[];
+  empiricallyAnchored: boolean;
 };
 
 export type CreditAssessment = {
@@ -148,7 +156,7 @@ export const DEFAULT_WEIGHTS: Required<Weights> = {
   renewable: 0.1,
   contractFlexibility: 0.15,
   rateStability: 0.15,
-  ratings: 0.1,
+  billTransparency: 0.1,
   historicalPricing: 0.1,
   weatherForecast: 0,
 };

@@ -5,6 +5,7 @@ import {
   type MarketContext,
   type PlanForScoring,
   type RankedPlan,
+  type SeasonalContext,
   type Weights,
   DEFAULT_WEIGHTS,
 } from "./types.ts";
@@ -24,6 +25,8 @@ export function scoreAndRank(
   limit: number,
   market: MarketContext | null = null,
   devices: DeviceFlag[] = [],
+  seasonal: SeasonalContext | null = null,
+  today: Date = new Date(),
 ): RankedPlan[] {
   const w = normalizeWeights(weights);
   if (candidates.length === 0) return [];
@@ -93,15 +96,54 @@ export function scoreAndRank(
     return Math.min(1, ratio / 0.2);
   };
 
-  // Weather-forecast axis is a deliberate stub at 0.5 (neutral) until the
-  // forecast pipeline is wired. Surfacing the slider now reserves the shape of
-  // the API so we can fill it in without breaking saved weights.
-  const weatherScore = (_plan: PlanForScoring) => 0.5;
+  // Weather/seasonal axis. For each plan, project the months its contract
+  // would cover starting today, sum the per-month volatility weight, and
+  // normalize to 0..1. Fixed plans benefit from high exposure (locks in
+  // before TX summer / winter spikes); Variable plans get penalized for it
+  // (rate floats with the volatility). Month-to-month plans stay near
+  // neutral since the user can switch out before a peak.
+  const startMonth = today.getUTCMonth(); // 0-11
+  const weatherScore = (plan: PlanForScoring): number => {
+    if (!seasonal) return 0.5;
+    const termMonths = plan.term_months ?? 12;
+    if (termMonths <= 0) return 0.5;
+    let exposure = 0;
+    const horizon = Math.min(termMonths, 24); // cap so 36mo plans don't double-count seasons
+    for (let i = 0; i < horizon; i++) {
+      exposure += seasonal.monthlyVolatilityWeights[(startMonth + i) % 12];
+    }
+    const avgExposure = exposure / horizon;
+    // avgExposure typically falls in ~0.85-1.20 for TX. Map [0.85, 1.15] → [0, 1].
+    const normalized = Math.max(0, Math.min(1, (avgExposure - 0.85) / 0.30));
+    if (termMonths <= 1) return 0.5 + 0.2 * (0.5 - normalized); // m2m slight tilt toward mild exposure
+    if (plan.rate_type === "Fixed") return normalized;
+    if (plan.rate_type === "Variable") return 1 - normalized;
+    return 0.5;
+  };
 
-  // Ratings: placeholder neutral 0.5. We strip JD Power because it's stale
-  // (2012 vintage in some rows). Real signal will come from a future
-  // user-review aggregation table.
-  const ratingScore = (_plan: PlanForScoring) => 0.5;
+  // Bill transparency: penalize plans whose bill is sensitive to gotchas the
+  // user has to know about — bill-credit thresholds, minimum-usage fees, and
+  // tier cliffs between PTC's 500/1000/2000 kWh advertised rates. Higher score
+  // = bill matches the advertised rate more closely. Plans with no parsed
+  // EFL fall back to neutral 0.5 (benefit of the doubt).
+  const transparencyScore = (plan: PlanForScoring): number => {
+    const hasParsed = plan.base_charge != null || plan.energy_charge != null || plan.bill_credits != null;
+    if (!hasParsed) return 0.5;
+    let score = 1;
+    if (plan.bill_credits) score -= 0.35;
+    if (plan.minimum_usage_fee != null && plan.minimum_usage_fee > 0) score -= 0.20;
+    if (plan.has_minimum_usage_fee) score -= 0.05;
+    const tierCliff = (() => {
+      const r500 = plan.rate_500_kwh;
+      const r1000 = plan.rate_1000_kwh;
+      const r2000 = plan.rate_2000_kwh;
+      if (r500 == null || r1000 == null || r2000 == null || r1000 <= 0) return 0;
+      const spread = Math.max(Math.abs(r500 - r1000), Math.abs(r2000 - r1000)) / r1000;
+      return Math.min(1, spread / 0.5);
+    })();
+    score -= 0.30 * tierCliff;
+    return Math.max(0, Math.min(1, score));
+  };
 
   // Device-based score tweaks. Modest by design — these are *priors*, not
   // hard filters. EV / battery owners benefit from off-peak rate windows, so
@@ -130,7 +172,7 @@ export function scoreAndRank(
       renewable: renewScore(r.renewablePct),
       contractFlexibility: flexScore(r.etfUsd, r.termMonths),
       rateStability: stabilityScore(r.rateType),
-      ratings: ratingScore(r.plan),
+      billTransparency: transparencyScore(r.plan),
       historicalPricing: histPricing,
       weatherForecast: weatherScore(r.plan),
       marketDelta: md,
@@ -141,7 +183,7 @@ export function scoreAndRank(
       breakdown.renewable * w.renewable +
       breakdown.contractFlexibility * w.contractFlexibility +
       breakdown.rateStability * w.rateStability +
-      breakdown.ratings * w.ratings +
+      breakdown.billTransparency * w.billTransparency +
       breakdown.historicalPricing * w.historicalPricing +
       breakdown.weatherForecast * w.weatherForecast +
       deviceUplift(r.plan);
@@ -171,7 +213,7 @@ function normalizeWeights(weights: Weights): Required<Weights> {
     merged.renewable +
     merged.contractFlexibility +
     merged.rateStability +
-    merged.ratings +
+    merged.billTransparency +
     merged.historicalPricing +
     merged.weatherForecast;
   if (total <= 0) return { ...DEFAULT_WEIGHTS };
@@ -180,7 +222,7 @@ function normalizeWeights(weights: Weights): Required<Weights> {
     renewable: merged.renewable / total,
     contractFlexibility: merged.contractFlexibility / total,
     rateStability: merged.rateStability / total,
-    ratings: merged.ratings / total,
+    billTransparency: merged.billTransparency / total,
     historicalPricing: merged.historicalPricing / total,
     weatherForecast: merged.weatherForecast / total,
   };
