@@ -291,23 +291,20 @@ function QuizMultiQ({
 }
 
 function DerivedPreview({ weights }: { weights: WeightsUI }) {
-  const rows = (Object.keys(weights) as (keyof WeightsUI)[]).map((k) => ({
-    key: k,
-    label: FACTORS.find((f) => f.key === k)?.label ?? k,
-    value: weights[k],
-  }));
-  rows.sort((a, b) => b.value - a.value);
+  // Use stable FACTORS order (no sort) so rows never reposition as weights change.
+  const rows = FACTORS.map((f) => ({ key: f.key, label: f.label, value: weights[f.key] }));
   return (
     <div className="mt-12 border-t border-border/40 pt-6">
       <div className="font-mono text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
         Your derived weights
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+      {/* Fixed-height container so the section stays the same size regardless of values. */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 min-h-[168px]">
         {rows.map((r) => (
           <div key={r.key} className="flex items-center gap-3">
             <div className="flex-1 font-mono text-xs text-foreground">{r.label}</div>
             <div className="h-1.5 flex-[2] bg-foreground/10">
-              <div className="h-full bg-accent" style={{ width: `${Math.min(100, r.value * 2)}%` }} />
+              <div className="h-full bg-accent transition-[width] duration-300" style={{ width: `${Math.min(100, r.value * 2)}%` }} />
             </div>
             <div className="w-10 text-right font-mono text-[11px] tabular-nums text-muted-foreground">
               {r.value}
