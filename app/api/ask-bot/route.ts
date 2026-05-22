@@ -5,7 +5,13 @@ import { rateLimit } from "@/lib/rate-limit";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const IP_SALT = process.env.IP_HASH_SALT ?? "texergy-default-salt-change-me";
+// In production, a missing salt lets attackers pre-compute IP hashes and bypass
+// rate limiting entirely. Fail fast so the issue is caught at deploy time.
+const IP_SALT = process.env.IP_HASH_SALT;
+if (!IP_SALT && process.env.NODE_ENV === "production") {
+  throw new Error("IP_HASH_SALT must be set in production (required for rate-limit security).");
+}
+const _IP_SALT = IP_SALT ?? "texergy-dev-salt-not-for-production";
 
 // Two-tier limit: protects the user from accidental loops AND the daily Gemini
 // free-tier quota from a noisy IP. Enforced in dev too — the whole point is to
@@ -22,7 +28,7 @@ function getClientIp(req: NextRequest): string {
 }
 
 function hashIp(ip: string): string {
-  return createHash("sha256").update(`${IP_SALT}:${ip}`).digest("hex");
+  return createHash("sha256").update(`${_IP_SALT}:${ip}`).digest("hex");
 }
 
 const MODEL = "gemini-2.5-flash-lite";
