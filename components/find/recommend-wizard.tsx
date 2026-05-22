@@ -83,7 +83,7 @@ export function RecommendWizard() {
     <div className="relative min-h-screen">
       <div className="grid-bg fixed inset-0 opacity-30" aria-hidden="true" />
 
-      <header className="fixed inset-x-0 top-0 z-30 border-b border-border/50 bg-background/90 px-6 py-6 backdrop-blur-md md:px-12">
+      <header className="fixed inset-x-0 top-0 z-30 border-b border-border/50 bg-background/90 px-4 py-4 sm:px-6 sm:py-6 md:px-12 backdrop-blur-md">
         <div className="flex items-center justify-between gap-6">
           <button
             type="button"
@@ -100,22 +100,22 @@ export function RecommendWizard() {
           type="button"
           onClick={() => router.push("/")}
           aria-label="Back to Texergy AI home"
-          className="absolute left-1/2 top-4 inline-flex size-10 -translate-x-1/2 items-center justify-center transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+          className="absolute left-1/2 top-2 inline-flex size-7 sm:size-10 -translate-x-1/2 items-center justify-center transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-background"
         >
-          <span className="inline-flex size-9 items-center justify-center rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
+          <span className="inline-flex size-6 sm:size-9 items-center justify-center rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
             <img
               src="/logo.svg"
               alt="Texergy AI"
-              className="size-[25px]"
+              className="size-[16px] sm:size-[25px]"
             />
           </span>
         </button>
-        <div className="mt-6">
+        <div className="mt-3 sm:mt-4 w-full overflow-x-auto">
           <ProgressBar steps={progress} />
         </div>
       </header>
 
-      <div className="relative z-10 px-6 pb-12 pt-[152px] md:px-12">
+      <div className="relative z-10 px-3 pb-12 pt-28 sm:px-6 sm:pt-[152px] md:px-12">
         {/* The key prop on motion.div forces a fresh mount on every step
             change, which lets each step play its enter animation. We drop
             AnimatePresence + exit animations because the mode="wait" pattern

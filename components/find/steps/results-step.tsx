@@ -141,12 +141,12 @@ export function ResultsStep({
   }, [data, state.sortBy]);
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="w-full">
       <SectionLabel className="block mb-4">Your matches</SectionLabel>
-      <h2 className="font-[family-name:var(--font-bebas)] text-foreground text-[clamp(2.5rem,5vw,4rem)] leading-[0.95] tracking-tight mb-2">
+      <h2 className="font-[family-name:var(--font-bebas)] text-foreground text-[clamp(2rem,5vw,4rem)] leading-[0.95] tracking-tight mb-2">
         HERE&apos;S WHAT <span className="text-accent">FITS.</span>
       </h2>
-      <p className="font-mono text-sm text-muted-foreground mb-10">
+      <p className="font-mono text-xs sm:text-sm text-muted-foreground mb-8 sm:mb-10">
         {loading
           ? "Crunching plans…"
           : error
@@ -158,13 +158,13 @@ export function ResultsStep({
 
       {/* Mobile/tablet: Refine toggle. Hidden on lg+ where the sidebar is
           always visible. */}
-      <div className="lg:hidden mb-6">
+      <div className="lg:hidden mb-4 sm:mb-6">
         <button
           type="button"
           onClick={() => setSidebarOpen((v) => !v)}
           aria-expanded={sidebarOpen}
           aria-controls="results-refine-panel"
-          className="w-full flex items-center justify-between border border-foreground/20 px-5 py-3 font-mono text-xs uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-colors"
+          className="w-full flex items-center justify-between border border-foreground/20 px-3 sm:px-5 py-2 sm:py-3 font-mono text-[10px] sm:text-xs uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-colors"
         >
           <span>{sidebarOpen ? "Hide" : "Refine"} preferences</span>
           <motion.span
@@ -194,7 +194,7 @@ export function ResultsStep({
         </AnimatePresence>
       </div>
 
-      <div className="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-12">
+      <div className="grid lg:grid-cols-[240px_1fr] gap-3 sm:gap-4 md:gap-6 lg:gap-4 lg:pl-12">
         <aside className="hidden lg:block lg:sticky lg:top-8 lg:self-start">
           <ResultsSidebar state={state} onUpdate={onUpdate} />
           <div className="mt-8 pt-6 border-t border-border/40">
@@ -208,7 +208,7 @@ export function ResultsStep({
           </div>
         </aside>
 
-        <div>
+        <div className="mx-auto max-w-[calc(100vw-24px)] sm:max-w-none lg:relative lg:h-full lg:w-full lg:max-w-none lg:mx-0">
           {error ? (
             <div className="border border-destructive/50 p-6 font-mono text-sm text-destructive">
               {error}
@@ -242,15 +242,15 @@ export function ResultsStep({
             </div>
           ) : (
             <>
-            <div className="mb-3 flex items-center justify-end gap-3">
-              <label htmlFor="sort-by" className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-3 mx-auto max-w-full sm:max-w-none lg:-mt-16">
+              <label htmlFor="sort-by" className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground whitespace-nowrap flex-shrink-0">
                 Sort by
               </label>
               <select
                 id="sort-by"
                 value={state.sortBy}
                 onChange={(e) => onUpdate({ sortBy: e.target.value as SortBy })}
-                className="bg-background border border-foreground/25 px-3 py-1.5 font-mono text-xs text-foreground focus:outline-none focus:border-accent transition-colors"
+                className="bg-background border border-foreground/25 px-2 sm:px-3 py-1.5 font-mono text-xs text-foreground focus:outline-none focus:border-accent transition-colors flex-1 sm:flex-initial min-w-0 sm:min-w-auto truncate"
               >
                 {SORT_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -263,14 +263,14 @@ export function ResultsStep({
                 and the user scrolls within the list instead of the whole page.
                 Wraps the scroller in a relative parent so we can layer top/bottom
                 gradient fades that hint at more content above/below the fold. */}
-            <div className="relative border border-border/40 bg-background/40">
+            <div className="relative border border-border/40 bg-background/40 overflow-hidden mx-auto max-w-full sm:max-w-none lg:absolute lg:left-6 lg:right-0 lg:-top-5 lg:bottom-0 lg:flex lg:flex-col lg:min-h-0 lg:max-w-none lg:mx-0">
               <div
                 // data-lenis-prevent tells the site-wide Lenis smooth-scroll
                 // wrapper to leave wheel/touch events for this element alone,
                 // so two-finger trackpad scrolling actually reaches the
                 // container instead of getting swallowed by the page scroller.
                 data-lenis-prevent="true"
-                className="results-scroller max-h-[calc(100vh-280px)] overflow-y-auto overscroll-contain"
+                className="results-scroller max-h-[calc(100vh-280px)] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto overscroll-contain"
                 tabIndex={0}
                 aria-label={`${sortedRanked.length} plan results — scroll to browse`}
               >

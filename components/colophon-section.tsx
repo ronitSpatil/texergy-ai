@@ -149,7 +149,7 @@ export function ColophonSection() {
               <a href="/texas-energy-101" className="hover:text-accent transition-colors duration-200">Texas Energy 101</a>
             </li>
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
-              Energy Usage Calculator <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
+              Usage Calculator <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
             </li>
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
               ESID Lookup <span className="ml-0.5 text-[9px] text-muted-foreground/60 uppercase tracking-wide">Soon</span>
