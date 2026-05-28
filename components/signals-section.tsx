@@ -140,7 +140,7 @@ export function SignalsSection() {
       {/* Section header */}
       <div ref={headerRef} className="mb-20 max-w-3xl">
         <SectionLabel>02 / How It Works</SectionLabel>
-        <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight leading-none">
+        <h2 className="mt-4 font-display text-5xl md:text-7xl tracking-tight leading-none">
           STEP BY STEP
         </h2>
         <p className="mt-6 font-mono text-sm text-muted-foreground leading-relaxed max-w-xl">
@@ -220,7 +220,7 @@ function SignalRow({
             crosses this row. */}
         <span
           ref={numberRef}
-          className="absolute top-1 left-0 lg:left-1/2 lg:-translate-x-1/2 lg:bg-background lg:px-4 z-10 font-[var(--font-bebas)] text-4xl sm:text-5xl leading-none tabular-nums text-foreground/30 transition-colors duration-500 [&.is-lit]:text-foreground"
+          className="absolute top-1 left-0 lg:left-1/2 lg:-translate-x-1/2 lg:bg-background lg:px-4 z-10 font-display text-4xl sm:text-5xl leading-none tabular-nums text-foreground/30 transition-colors duration-500 [&.is-lit]:text-foreground"
         >
           {String(index + 1).padStart(2, "0")}
         </span>
@@ -260,7 +260,7 @@ function SignalRow({
               !onRight ? "lg:justify-end" : ""
             }`}
           >
-            <h3 className="font-[var(--font-bebas)] text-3xl sm:text-4xl tracking-tight leading-none">
+            <h3 className="font-display text-3xl sm:text-4xl tracking-tight leading-none">
               {signal.title.toUpperCase()}
             </h3>
             {index === 0 && (

@@ -14,7 +14,7 @@ export default function DisclaimerPage() {
         <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
           Disclaimer
         </span>
-        <h1 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight leading-none">
+        <h1 className="mt-4 font-display text-5xl md:text-7xl tracking-tight leading-none">
           INFORMATIONAL. NOT ADVICE.
         </h1>
         <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
@@ -24,7 +24,7 @@ export default function DisclaimerPage() {
 
       <div className="space-y-12 text-foreground/80 leading-relaxed">
         <section>
-          <h2 className="font-[var(--font-bebas)] text-3xl tracking-tight text-foreground mb-4">
+          <h2 className="font-display text-3xl tracking-tight text-foreground mb-4">
             Estimates, not guarantees
           </h2>
           <p className="font-mono text-sm">
@@ -38,7 +38,7 @@ export default function DisclaimerPage() {
         </section>
 
         <section>
-          <h2 className="font-[var(--font-bebas)] text-3xl tracking-tight text-foreground mb-4">
+          <h2 className="font-display text-3xl tracking-tight text-foreground mb-4">
             Why estimates differ from reality
           </h2>
           <ul className="list-disc list-outside ml-5 space-y-3 marker:text-accent/60 font-mono text-sm">
@@ -80,7 +80,7 @@ export default function DisclaimerPage() {
         </section>
 
         <section>
-          <h2 className="font-[var(--font-bebas)] text-3xl tracking-tight text-foreground mb-4">
+          <h2 className="font-display text-3xl tracking-tight text-foreground mb-4">
             Not financial, legal, or energy-advisory advice
           </h2>
           <p className="font-mono text-sm">
@@ -92,7 +92,7 @@ export default function DisclaimerPage() {
         </section>
 
         <section>
-          <h2 className="font-[var(--font-bebas)] text-3xl tracking-tight text-foreground mb-4">
+          <h2 className="font-display text-3xl tracking-tight text-foreground mb-4">
             Verify before you sign up
           </h2>
           <p className="font-mono text-sm">
@@ -105,7 +105,7 @@ export default function DisclaimerPage() {
         </section>
 
         <section>
-          <h2 className="font-[var(--font-bebas)] text-3xl tracking-tight text-foreground mb-4">
+          <h2 className="font-display text-3xl tracking-tight text-foreground mb-4">
             No liability
           </h2>
           <p className="font-mono text-sm">
@@ -125,7 +125,7 @@ export default function DisclaimerPage() {
         </section>
 
         <section>
-          <h2 className="font-[var(--font-bebas)] text-3xl tracking-tight text-foreground mb-4">
+          <h2 className="font-display text-3xl tracking-tight text-foreground mb-4">
             Data sources
           </h2>
           <p className="font-mono text-sm">
@@ -156,7 +156,7 @@ export default function DisclaimerPage() {
         </section>
 
         <section>
-          <h2 className="font-[var(--font-bebas)] text-3xl tracking-tight text-foreground mb-4">
+          <h2 className="font-display text-3xl tracking-tight text-foreground mb-4">
             Questions
           </h2>
           <p className="font-mono text-sm">

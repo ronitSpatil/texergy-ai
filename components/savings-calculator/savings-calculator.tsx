@@ -405,7 +405,7 @@ function SavingsResults({ result, form }: { result: CalcResult; form: FormState 
           <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground mb-3">
             Current — {providerLabel}
           </div>
-          <div className="font-[var(--font-bebas)] text-4xl text-foreground tabular-nums">
+          <div className="font-display text-4xl text-foreground tabular-nums">
             ${currentMonthly.toFixed(2)}
             <span className="font-mono text-base text-muted-foreground ml-1">/mo</span>
           </div>
@@ -425,7 +425,7 @@ function SavingsResults({ result, form }: { result: CalcResult; form: FormState 
           <div className="font-mono text-[9px] uppercase tracking-[0.3em] text-accent mb-3">
             {bestPlan.plan.rep_name} — {bestPlan.plan.name}
           </div>
-          <div className="font-[var(--font-bebas)] text-4xl text-foreground tabular-nums">
+          <div className="font-display text-4xl text-foreground tabular-nums">
             ${bestPlan.estMonthlyBillUsd.toFixed(2)}
             <span className="font-mono text-base text-muted-foreground ml-1">/mo</span>
           </div>
@@ -455,7 +455,7 @@ function SavingsResults({ result, form }: { result: CalcResult; form: FormState 
             </div>
           </div>
           <div className="text-left sm:text-right shrink-0">
-            <div className="font-[var(--font-bebas)] text-2xl tabular-nums">
+            <div className="font-display text-2xl tabular-nums">
               ${secondPlan.estMonthlyBillUsd.toFixed(2)}/mo
             </div>
             <div className="font-mono text-xs text-muted-foreground">
@@ -495,7 +495,7 @@ function AlreadyCheap({ result, form }: { result: CalcResult; form: FormState })
         <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-4">
           Result
         </div>
-        <h3 className="font-[var(--font-bebas)] text-3xl md:text-4xl tracking-tight leading-none text-foreground mb-4">
+        <h3 className="font-display text-3xl md:text-4xl tracking-tight leading-none text-foreground mb-4">
           {diff >= 0 ? "YOU'RE ALREADY NEAR THE BEST RATE." : "YOU COULD BE PAYING LESS."}
         </h3>
         <p className="font-mono text-sm text-muted-foreground leading-relaxed max-w-xl">
@@ -527,7 +527,7 @@ function Stat({ label, value, highlight }: { label: string; value: string; highl
       <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
         {label}
       </div>
-      <div className={`font-[var(--font-bebas)] text-4xl tabular-nums tracking-tight ${highlight ? "text-accent" : "text-foreground"}`}>
+      <div className={`font-display text-4xl tabular-nums tracking-tight ${highlight ? "text-accent" : "text-foreground"}`}>
         {value}
       </div>
     </div>

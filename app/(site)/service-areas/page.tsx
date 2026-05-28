@@ -130,7 +130,7 @@ export default function ServiceAreasPage() {
         <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
           Service Areas
         </span>
-        <h1 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight leading-none">
+        <h1 className="mt-4 font-display text-5xl md:text-7xl tracking-tight leading-none">
           WHERE TEXERGY WORKS.
         </h1>
         <p className="mt-6 max-w-2xl font-mono text-sm text-muted-foreground leading-relaxed">
@@ -150,7 +150,7 @@ export default function ServiceAreasPage() {
         {TDU_AREAS.map((tdu) => (
           <div key={tdu.code}>
             <div className="border-l-2 border-accent pl-5 mb-6">
-              <h2 className="font-[var(--font-bebas)] text-3xl md:text-4xl tracking-tight text-foreground leading-none">
+              <h2 className="font-display text-3xl md:text-4xl tracking-tight text-foreground leading-none">
                 {tdu.name.toUpperCase()}
               </h2>
               <p className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
@@ -171,7 +171,7 @@ export default function ServiceAreasPage() {
 
       <section className="mt-24 border-t border-border/50 pt-12">
         <div className="border-l-2 border-muted-foreground/40 pl-5 mb-6">
-          <h2 className="font-[var(--font-bebas)] text-3xl md:text-4xl tracking-tight text-foreground leading-none">
+          <h2 className="font-display text-3xl md:text-4xl tracking-tight text-foreground leading-none">
             NOT ON THE DEREGULATED GRID
           </h2>
           <p className="mt-3 max-w-2xl font-mono text-sm text-foreground/80 leading-relaxed">

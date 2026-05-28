@@ -113,7 +113,7 @@ export function ToolsSection() {
             Free to use
           </span>
         </div>
-        <h3 className="font-[var(--font-bebas)] text-4xl md:text-5xl tracking-tight leading-none">
+        <h3 className="font-display text-4xl md:text-5xl tracking-tight leading-none">
           NEED ANYTHING ELSE?
         </h3>
         <p className="mt-4 font-mono text-sm text-muted-foreground leading-relaxed max-w-xl">
@@ -239,7 +239,7 @@ function ServiceCard({ service }: { service: (typeof SERVICES)[number] }) {
             )}
           </div>
           <h4
-            className={`font-[var(--font-bebas)] text-2xl tracking-tight leading-none mb-3 transition-colors ${
+            className={`font-display text-2xl tracking-tight leading-none mb-3 transition-colors ${
               service.comingSoon ? "text-foreground/70" : "text-foreground group-hover:text-accent"
             }`}
           >

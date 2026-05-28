@@ -20,7 +20,7 @@ export default async function WaitlistAdminPage({
     return (
       <main className="min-h-screen bg-background text-foreground p-8 font-sans">
         <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">Admin</span>
-        <h1 className="mt-4 font-[var(--font-bebas)] text-4xl tracking-tight mb-4">DISABLED</h1>
+        <h1 className="mt-4 font-display text-4xl tracking-tight mb-4">DISABLED</h1>
         <p className="text-muted-foreground max-w-xl font-mono text-sm leading-relaxed">
           Set <code className="bg-input border border-border px-1.5 py-0.5">ADMIN_TOKEN</code>{" "}
           in <code className="bg-input border border-border px-1.5 py-0.5">.env.local</code>,
@@ -38,7 +38,7 @@ export default async function WaitlistAdminPage({
     return (
       <main className="min-h-screen bg-background text-foreground p-8 font-sans">
         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-destructive">403</span>
-        <h1 className="mt-4 font-[var(--font-bebas)] text-4xl tracking-tight mb-2">NOT AUTHORIZED</h1>
+        <h1 className="mt-4 font-display text-4xl tracking-tight mb-2">NOT AUTHORIZED</h1>
         <p className="text-muted-foreground font-mono text-sm">
           Append <code className="bg-input border border-border px-1.5 py-0.5">?token=…</code>{" "}
           to the URL with your admin token.
@@ -58,7 +58,7 @@ export default async function WaitlistAdminPage({
             <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
               01 / Internal
             </span>
-            <h1 className="mt-3 font-[var(--font-bebas)] text-5xl tracking-tight leading-none">
+            <h1 className="mt-3 font-display text-5xl tracking-tight leading-none">
               WAITLIST
             </h1>
             <p className="mt-3 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">

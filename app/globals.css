@@ -3,44 +3,55 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Light mode with orange accent. Remove the .light class to roll back. */
+/* Light mode with orange accent. Remove the .light class to roll back.
+   Neutrals carry a touch of the accent's warmth (hue ~60, low chroma) so the
+   UI reads as a considered warm-paper palette instead of flat clinical gray. */
 .light {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.16 0 0);
-  --card: oklch(0.985 0 0);
-  --card-foreground: oklch(0.16 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.16 0 0);
-  --primary: oklch(0.16 0 0);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.95 0 0);
-  --secondary-foreground: oklch(0.24 0 0);
-  --muted: oklch(0.9 0 0);
-  --muted-foreground: oklch(0.42 0 0);
-  --accent: oklch(0.7 0.2 45);
-  --accent-foreground: oklch(0.12 0 0);
+  --background: oklch(0.993 0.003 75);
+  --foreground: oklch(0.19 0.012 55);
+  --card: oklch(0.985 0.004 78);
+  --card-foreground: oklch(0.19 0.012 55);
+  --popover: oklch(0.997 0.002 80);
+  --popover-foreground: oklch(0.19 0.012 55);
+  --primary: oklch(0.19 0.012 55);
+  --primary-foreground: oklch(0.99 0.004 80);
+  --secondary: oklch(0.955 0.006 75);
+  --secondary-foreground: oklch(0.26 0.012 55);
+  --muted: oklch(0.92 0.006 75);
+  --muted-foreground: oklch(0.47 0.012 60);
+  --accent: oklch(0.66 0.185 42);
+  --accent-foreground: oklch(0.16 0.02 55);
+  /* Supporting orange tones so the accent has depth (gradients, hovers, tints)
+     instead of one flat hue doing all the work. */
+  --accent-strong: oklch(0.55 0.165 38);
+  --accent-soft: oklch(0.95 0.035 65);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.82 0 0);
-  --input: oklch(0.965 0 0);
-  --ring: oklch(0.7 0.2 45);
+  --border: oklch(0.865 0.008 70);
+  --input: oklch(0.968 0.004 78);
+  --ring: oklch(0.66 0.185 42);
   --radius: 0rem;
-  --sidebar: oklch(0.98 0 0);
-  --sidebar-foreground: oklch(0.16 0 0);
-  --sidebar-primary: oklch(0.7 0.2 45);
-  --sidebar-primary-foreground: oklch(0.12 0 0);
-  --sidebar-accent: oklch(0.94 0 0);
-  --sidebar-accent-foreground: oklch(0.16 0 0);
-  --sidebar-border: oklch(0.82 0 0);
-  --sidebar-ring: oklch(0.7 0.2 45);
-  --grid-line: oklch(0.88 0 0);
-  --scrollbar-track: hsl(0, 0%, 100%);
-  --scrollbar-thumb: hsl(0, 0%, 72%);
-  --scrollbar-thumb-hover: hsl(0, 0%, 58%);
-  --split-flap-bg: oklch(0.985 0 0);
-  --split-flap-bg-active: oklch(0.94 0 0);
-  --split-flap-text: oklch(0.12 0 0);
-  --split-flap-divider: oklch(0 0 0 / 0.16);
+  --sidebar: oklch(0.98 0.004 78);
+  --sidebar-foreground: oklch(0.19 0.012 55);
+  --sidebar-primary: oklch(0.66 0.185 42);
+  --sidebar-primary-foreground: oklch(0.16 0.02 55);
+  --sidebar-accent: oklch(0.94 0.006 75);
+  --sidebar-accent-foreground: oklch(0.19 0.012 55);
+  --sidebar-border: oklch(0.865 0.008 70);
+  --sidebar-ring: oklch(0.66 0.185 42);
+  --grid-line: oklch(0.9 0.006 75);
+  --scrollbar-track: oklch(0.993 0.003 75);
+  --scrollbar-thumb: oklch(0.78 0.01 70);
+  --scrollbar-thumb-hover: oklch(0.62 0.014 60);
+  --split-flap-bg: oklch(0.985 0.004 78);
+  --split-flap-bg-active: oklch(0.94 0.02 60);
+  --split-flap-text: oklch(0.16 0.02 55);
+  --split-flap-divider: oklch(0.2 0.02 50 / 0.16);
+  /* Warm, layered elevation. Shadows are tinted toward the ink color rather
+     than pure black so they sit naturally on the warm background. */
+  --elevation-1: 0 1px 2px -1px oklch(0.2 0.02 55 / 0.1), 0 1px 3px oklch(0.2 0.02 55 / 0.05);
+  --elevation-2: 0 2px 4px -2px oklch(0.2 0.02 55 / 0.08), 0 8px 20px -8px oklch(0.2 0.02 55 / 0.14);
+  --elevation-3: 0 4px 8px -4px oklch(0.2 0.02 55 / 0.1), 0 18px 44px -16px oklch(0.2 0.02 55 / 0.2);
 }
 
 /* Original editorial dark palette retained as the default and dark override. */
@@ -60,12 +71,17 @@
   --muted-foreground: oklch(0.55 0 0);
   --accent: oklch(0.7 0.2 45);
   --accent-foreground: oklch(0.08 0 0);
+  --accent-strong: oklch(0.6 0.18 40);
+  --accent-soft: oklch(0.22 0.04 50);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
   --border: oklch(0.25 0 0);
   --input: oklch(0.2 0 0);
   --ring: oklch(0.7 0.2 45);
   --radius: 0rem;
+  --elevation-1: 0 1px 2px -1px oklch(0 0 0 / 0.5), 0 1px 3px oklch(0 0 0 / 0.4);
+  --elevation-2: 0 2px 4px -2px oklch(0 0 0 / 0.5), 0 8px 20px -8px oklch(0 0 0 / 0.55);
+  --elevation-3: 0 4px 8px -4px oklch(0 0 0 / 0.5), 0 18px 44px -16px oklch(0 0 0 / 0.6);
   --sidebar: oklch(0.1 0 0);
   --sidebar-foreground: oklch(0.95 0 0);
   --sidebar-primary: oklch(0.7 0.2 45);
@@ -103,6 +119,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -120,6 +138,10 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* Elevation utilities: shadow-e1 / shadow-e2 / shadow-e3 */
+  --shadow-e1: var(--elevation-1);
+  --shadow-e2: var(--elevation-2);
+  --shadow-e3: var(--elevation-3);
 }
 
 @layer base {

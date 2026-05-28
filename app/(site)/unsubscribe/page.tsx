@@ -35,7 +35,7 @@ export default async function UnsubscribePage({
         <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
           Newsletter
         </span>
-        <h1 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-6xl tracking-tight leading-none">
+        <h1 className="mt-4 font-display text-5xl md:text-6xl tracking-tight leading-none">
           UNSUBSCRIBE.
         </h1>
       </header>

@@ -3,7 +3,6 @@ import { SignalsSection } from "@/components/signals-section";
 import { WorkSection } from "@/components/work-section";
 import { PrinciplesSection } from "@/components/principles-section";
 import { WaitlistSection } from "@/components/waitlist-section";
-import { FaqSection } from "@/components/faq-section";
 import { ToolsSection } from "@/components/tools-section";
 import { ColophonSection } from "@/components/colophon-section";
 import { SideNav } from "@/components/side-nav";
@@ -27,7 +26,6 @@ export default function Page() {
         <WorkSection />
         <PrinciplesSection />
         {!IS_PRODUCT_MODE && <WaitlistSection />}
-        <FaqSection />
         <ToolsSection />
         <ColophonSection />
       </div>

@@ -347,7 +347,7 @@ function Question({
         <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent tabular-nums">
           {step}
         </span>
-        <h3 className="font-[var(--font-bebas)] text-2xl tracking-tight leading-none">
+        <h3 className="font-display text-2xl tracking-tight leading-none">
           {title.toUpperCase()}
         </h3>
       </div>
@@ -398,7 +398,7 @@ function Stat({
         {label}
       </div>
       <div
-        className={`font-[var(--font-bebas)] text-4xl tabular-nums tracking-tight leading-none ${
+        className={`font-display text-4xl tabular-nums tracking-tight leading-none ${
           highlight ? "text-accent" : "text-foreground"
         }`}
       >

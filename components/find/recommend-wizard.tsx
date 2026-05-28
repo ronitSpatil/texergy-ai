@@ -96,21 +96,7 @@ export function RecommendWizard() {
             ZIP <span className="text-foreground">{state.zip}</span>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => router.push("/")}
-          aria-label="Back to Texergy AI home"
-          className="absolute left-1/2 top-2 inline-flex size-7 sm:size-10 -translate-x-1/2 items-center justify-center transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-background"
-        >
-          <span className="inline-flex size-6 sm:size-9 items-center justify-center rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
-            <img
-              src="/logo.svg"
-              alt="Texergy AI"
-              className="size-[16px] sm:size-[25px]"
-            />
-          </span>
-        </button>
-        <div className="mt-3 sm:mt-4 w-full overflow-x-auto">
+        <div className="mt-3 sm:mt-4 w-full">
           <ProgressBar steps={progress} />
         </div>
       </header>

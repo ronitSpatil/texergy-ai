@@ -71,7 +71,7 @@ export default async function ElectricityProvidersPage() {
         <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
           Electricity Providers
         </span>
-        <h1 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight leading-none">
+        <h1 className="mt-4 font-display text-5xl md:text-7xl tracking-tight leading-none">
           THE COMPANIES SELLING YOU POWER.
         </h1>
         <p className="mt-6 max-w-2xl font-mono text-sm text-muted-foreground leading-relaxed">
@@ -92,7 +92,7 @@ export default async function ElectricityProvidersPage() {
           <li key={rep.id} className="py-5 flex items-start gap-6">
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline gap-3 flex-wrap">
-                <h2 className="font-[var(--font-bebas)] text-2xl tracking-tight text-foreground leading-none">
+                <h2 className="font-display text-2xl tracking-tight text-foreground leading-none">
                   {rep.name}
                 </h2>
                 {rep.puct_number && (
@@ -116,7 +116,7 @@ export default async function ElectricityProvidersPage() {
               </div>
             </div>
             <div className="text-right shrink-0">
-              <div className="font-[var(--font-bebas)] text-3xl text-foreground tabular-nums leading-none">
+              <div className="font-display text-3xl text-foreground tabular-nums leading-none">
                 {rep.active_plan_count}
               </div>
               <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground">

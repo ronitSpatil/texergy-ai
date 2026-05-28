@@ -41,7 +41,7 @@ function SectionHeader({ id, eyebrow, title }: { id: string; eyebrow?: string; t
           {eyebrow}
         </p>
       ) : null}
-      <h2 className="mt-1 font-[var(--font-bebas)] text-3xl md:text-4xl tracking-tight text-foreground leading-none">
+      <h2 className="mt-1 font-display text-3xl md:text-4xl tracking-tight text-foreground leading-none">
         {title}
       </h2>
     </div>
@@ -63,7 +63,7 @@ export default function TexasEnergy101Page() {
         <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
           Texas Energy 101
         </span>
-        <h1 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight leading-none">
+        <h1 className="mt-4 font-display text-5xl md:text-7xl tracking-tight leading-none">
           A GUIDE TO THE TEXAS ELECTRICITY MARKET.
         </h1>
         <p className="mt-6 font-mono text-sm text-muted-foreground leading-relaxed">

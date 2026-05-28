@@ -3,8 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { BitmapChevron } from "@/components/bitmap-chevron";
-import { ScrambleTextOnHover } from "@/components/scramble-text";
 
 /** ZIP entry that replaces the "Join Waitlist" CTA on the hero when the site
  *  is built in product mode. Submitting takes the user straight into the
@@ -30,10 +28,14 @@ export function HeroZipForm() {
     setSubmitting(true);
 
     try {
+      // Hard cap so the button can never get wedged on "Loading…" if the
+      // endpoint stalls — the server bounds its own external calls, but this
+      // guards against anything in between (cold start, proxy, lost network).
       const res = await fetch("/api/zip-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ zip }),
+        signal: AbortSignal.timeout(15000),
       });
       const data = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
@@ -54,9 +56,13 @@ export function HeroZipForm() {
         return;
       }
       router.push(`/find/recommend?zip=${zip}`);
-    } catch {
+    } catch (err) {
       setSubmitting(false);
-      setError("Network error. Try again.");
+      if (err instanceof DOMException && err.name === "TimeoutError") {
+        setError("This is taking longer than expected. Try again in a moment.");
+      } else {
+        setError("Network error. Try again.");
+      }
     }
   }
 
@@ -65,17 +71,18 @@ export function HeroZipForm() {
       onSubmit={onSubmit}
       noValidate
       aria-label="Enter your ZIP code"
-      className="relative w-full max-w-2xl mx-auto flex flex-col gap-6 border border-foreground/30 focus-within:border-accent/60 bg-background/40 backdrop-blur-[2px] p-9 md:p-12 transition-colors duration-200 shadow-[0_0_0_1px_rgba(0,0,0,0.02),0_24px_48px_-32px_rgba(0,0,0,0.18)]"
+      className="relative w-full max-w-2xl mx-auto flex flex-col gap-6 rounded-xl border border-border/50 focus-within:border-accent/50 bg-background/50 backdrop-blur-sm shadow-e1 p-7 sm:p-9 md:p-12 transition-colors duration-200"
     >
       <div className="flex items-center justify-between gap-4">
-        <span className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
+        <span className="whitespace-nowrap font-mono text-[10px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.3em] text-muted-foreground">
           Get Started
         </span>
         <a
           href="/savings-calculator"
-          className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-accent transition-colors"
+          className="group/calc inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[10px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.25em] text-muted-foreground hover:text-accent transition-colors"
         >
-          See How Much You Can Save →
+          Savings Calculator
+          <span aria-hidden className="transition-transform duration-200 group-hover/calc:translate-x-0.5">→</span>
         </a>
       </div>
 
@@ -88,7 +95,7 @@ export function HeroZipForm() {
           type="button"
           role="radio"
           aria-checked={true}
-          className="relative text-center font-mono text-[11px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.25em] px-2 sm:px-5 py-2.5 border border-accent text-accent cursor-default"
+          className="relative text-center whitespace-nowrap font-mono text-[10px] sm:text-xs uppercase tracking-[0.02em] sm:tracking-[0.25em] px-2 sm:px-5 py-2.5 rounded-md border border-accent bg-accent-soft/40 text-accent cursor-default"
         >
           Residential
           <span className="ml-1.5 text-[8px] sm:text-[9px] tracking-[0.2em] text-accent align-middle">
@@ -101,7 +108,7 @@ export function HeroZipForm() {
           aria-checked="false"
           aria-disabled="true"
           disabled
-          className="relative text-center font-mono text-[11px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.25em] px-2 sm:px-5 py-2.5 border border-foreground/15 text-muted-foreground/60 cursor-not-allowed select-none"
+          className="relative text-center whitespace-nowrap font-mono text-[10px] sm:text-xs uppercase tracking-[0.02em] sm:tracking-[0.25em] px-2 sm:px-5 py-2.5 rounded-md border border-foreground/15 text-muted-foreground/60 cursor-not-allowed select-none"
           title="Commercial plans are in development."
         >
           Commercial
@@ -128,7 +135,7 @@ export function HeroZipForm() {
           }}
           aria-invalid={error != null}
           disabled={submitting}
-          className="flex-1 min-w-0 sm:w-52 sm:flex-none bg-background/60 border border-foreground/25 px-6 py-5 font-mono text-lg tracking-[0.3em] uppercase text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-accent focus:bg-background transition-colors disabled:opacity-60"
+          className="flex-1 min-w-0 sm:w-52 sm:flex-none rounded-lg bg-background/60 border border-foreground/25 px-6 py-5 font-mono text-lg tracking-[0.3em] uppercase text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-accent focus:bg-background transition-colors disabled:opacity-60"
         />
         <motion.button
           type="submit"
@@ -136,10 +143,25 @@ export function HeroZipForm() {
           whileHover={!submitting ? { scale: 1.02 } : undefined}
           whileTap={!submitting ? { scale: 0.98 } : undefined}
           transition={{ type: "spring", stiffness: 380, damping: 26 }}
-          className="group inline-flex items-center justify-center gap-3 flex-1 border border-foreground/30 px-8 py-5 font-mono text-base uppercase tracking-widest text-foreground hover:border-accent hover:text-accent transition-colors disabled:opacity-60"
+          className="group inline-flex items-center justify-center gap-2.5 flex-1 rounded-lg border border-accent/60 px-8 py-5 font-mono text-base uppercase tracking-widest text-foreground hover:bg-accent hover:border-accent hover:text-accent-foreground transition-colors disabled:opacity-60"
         >
-          <ScrambleTextOnHover text={submitting ? "Loading…" : "Find My Plan"} as="span" duration={0.6} />
-          <BitmapChevron className="transition-transform duration-[400ms] ease-in-out group-hover:rotate-45" />
+          <span>{submitting ? "Loading…" : "Find My Plan"}</span>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden
+            className="transition-transform duration-300 ease-out group-hover:translate-x-1"
+          >
+            <path
+              d="M4 12h15m0 0-5.5-5.5M19 12l-5.5 5.5"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </motion.button>
       </div>
       <div className="min-h-[1.25rem] -mt-2" aria-live="polite">

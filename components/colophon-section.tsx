@@ -81,7 +81,7 @@ export function ColophonSection() {
       {!IS_PRODUCT_MODE && (
         <div ref={headerRef} className="mb-16">
           <SectionLabel>07 / Coming soon</SectionLabel>
-          <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">TEXERGY AI</h2>
+          <h2 className="mt-4 font-display text-5xl md:text-7xl tracking-tight">TEXERGY AI</h2>
         </div>
       )}
 
@@ -109,7 +109,7 @@ export function ColophonSection() {
               )}
             </li>
             <li className="h-5 flex items-center font-mono text-xs text-foreground/80">
-              <a href="#faq" className="hover:text-accent transition-colors duration-200">FAQ</a>
+              <a href="/faq" className="hover:text-accent transition-colors duration-200">FAQ</a>
             </li>
           </ul>
         </div>

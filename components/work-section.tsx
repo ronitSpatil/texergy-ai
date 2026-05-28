@@ -127,7 +127,7 @@ export function WorkSection() {
       <ArtifactStyles />
       <div ref={headerRef} className="mb-16 max-w-3xl">
         <SectionLabel>03 / Engine</SectionLabel>
-        <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight leading-none">
+        <h2 className="mt-4 font-display text-5xl md:text-7xl tracking-tight leading-none">
           SMART MATCH ENGINE
         </h2>
         <p className="mt-6 font-mono text-sm text-muted-foreground leading-relaxed max-w-xl">
@@ -171,7 +171,7 @@ function VariableCard({ variable, index }: { variable: Variable; index: number }
         {/* Title */}
         <h3
           className={cn(
-            "mt-2 font-[var(--font-bebas)] tracking-tight leading-none text-foreground group-hover:text-accent transition-colors duration-300",
+            "mt-2 font-display tracking-tight leading-none text-foreground group-hover:text-accent transition-colors duration-300",
             variable.featured ? "text-4xl md:text-6xl" : "text-2xl md:text-3xl",
           )}
         >

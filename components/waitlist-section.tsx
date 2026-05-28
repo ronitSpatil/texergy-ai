@@ -53,7 +53,7 @@ export function WaitlistSection() {
     >
       <div ref={headerRef} className="mb-16">
         <SectionLabel>05 / Early Access</SectionLabel>
-        <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">
+        <h2 className="mt-4 font-display text-5xl md:text-7xl tracking-tight">
           JOIN THE WAITLIST
         </h2>
         <p className="mt-6 max-w-md font-mono text-sm text-muted-foreground leading-relaxed">

@@ -54,7 +54,7 @@ export function HeroSection() {
           </div>
         </SplitFlapAudioProvider>
 
-        <h2 className="font-[var(--font-bebas)] text-muted-foreground text-[clamp(1rem,3vw,2rem)] mt-4 tracking-wide">
+        <h2 className="font-sans font-medium text-foreground/70 text-[clamp(1.05rem,2.6vw,1.85rem)] mt-5 tracking-tight leading-snug max-w-2xl">
           Stop Overpaying for Electricity. Start Shopping Smarter with AI.
         </h2>
 

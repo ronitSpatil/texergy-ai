@@ -99,7 +99,7 @@ export function PrinciplesSection() {
       {/* Section header */}
       <div ref={headerRef} className="mb-24">
         <SectionLabel>04 / Why Us</SectionLabel>
-        <h2 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight">WHY TEXERGY?</h2>
+        <h2 className="mt-4 font-display text-5xl md:text-7xl tracking-tight">WHY TEXERGY?</h2>
       </div>
 
       {/* Staggered principles */}
@@ -116,7 +116,7 @@ export function PrinciplesSection() {
               {principle.number} / {principle.label}
             </span>
 
-            <h3 className="font-[var(--font-bebas)] text-4xl md:text-6xl lg:text-8xl tracking-tight leading-none">
+            <h3 className="font-display text-4xl md:text-6xl lg:text-8xl tracking-tight leading-none">
               {principle.titleParts.map((part, i) =>
                 part.highlight ? (
                   <HighlightText key={i} parallaxSpeed={0.6}>

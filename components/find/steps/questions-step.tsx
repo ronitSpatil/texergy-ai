@@ -51,7 +51,7 @@ export function QuestionsStep({
               step={50}
               value={state.monthlyUsageKwh}
               onChange={(e) => onChange({ monthlyUsageKwh: Math.max(50, Math.min(20000, parseInt(e.target.value || "0", 10) || 0)) })}
-              className="flex-1 bg-transparent border border-foreground/25 px-4 py-3 font-mono text-lg text-foreground focus:outline-none focus:border-accent transition-colors"
+              className="flex-1 bg-transparent border border-foreground/25 px-4 py-3 font-mono text-sm sm:text-lg text-foreground focus:outline-none focus:border-accent transition-colors"
             />
             <span className="font-mono text-sm text-muted-foreground">kWh / mo</span>
           </div>

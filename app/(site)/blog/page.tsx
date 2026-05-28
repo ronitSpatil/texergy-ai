@@ -32,7 +32,7 @@ export default function BlogPage() {
         <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
           Blog
         </span>
-        <h1 className="mt-4 font-[var(--font-bebas)] text-5xl md:text-7xl tracking-tight leading-none">
+        <h1 className="mt-4 font-display text-5xl md:text-7xl tracking-tight leading-none">
           FIELD NOTES FROM THE TEXAS GRID.
         </h1>
         <p className="mt-6 max-w-2xl font-mono text-sm text-muted-foreground leading-relaxed">
@@ -56,7 +56,7 @@ export default function BlogPage() {
                 Coming soon
               </span>
             </div>
-            <h2 className="font-[var(--font-bebas)] text-3xl md:text-4xl tracking-tight text-foreground group-hover:text-accent transition-colors duration-300 mb-3 leading-none">
+            <h2 className="font-display text-3xl md:text-4xl tracking-tight text-foreground group-hover:text-accent transition-colors duration-300 mb-3 leading-none">
               {post.title}
             </h2>
             <p className="font-mono text-sm text-muted-foreground leading-relaxed max-w-2xl">

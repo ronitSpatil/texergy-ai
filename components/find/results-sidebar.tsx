@@ -255,7 +255,7 @@ function EditWeightsDialog({
               <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent">
                 Tune the ranker
               </div>
-              <h2 className="mt-2 font-[var(--font-bebas)] text-3xl tracking-tight leading-none">
+              <h2 className="mt-2 font-display text-3xl tracking-tight leading-none">
                 EDIT WEIGHTS.
               </h2>
             </div>

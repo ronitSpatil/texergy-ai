@@ -81,7 +81,7 @@ function AskBot({ plans }: { plans: RankedPlan[] }) {
           <div className="font-mono text-[8px] sm:text-[10px] uppercase tracking-[0.3em] text-accent">
             AI Insight
           </div>
-          <h3 className="mt-1 sm:mt-2 font-[var(--font-bebas)] text-xl sm:text-2xl md:text-3xl tracking-tight leading-none">
+          <h3 className="mt-1 sm:mt-2 font-display text-xl sm:text-2xl md:text-3xl tracking-tight leading-none">
             ASK TEXERGY BOT.
           </h3>
         </div>
@@ -241,7 +241,7 @@ export function CompareDialog({
                 <div className="font-mono text-[8px] sm:text-[10px] uppercase tracking-[0.3em] text-accent">
                   Side-by-side
                 </div>
-                <h2 className="mt-1 sm:mt-2 font-[var(--font-bebas)] text-2xl sm:text-3xl md:text-5xl tracking-tight leading-none">
+                <h2 className="mt-1 sm:mt-2 font-display text-2xl sm:text-3xl md:text-5xl tracking-tight leading-none">
                   COMPARE PLANS.
                 </h2>
               </div>
@@ -294,7 +294,7 @@ export function CompareDialog({
                           <div className="font-mono text-[7px] sm:text-[10px] uppercase tracking-[0.2em] text-muted-foreground truncate">
                             {r.plan.rep_name}
                           </div>
-                          <div className="mt-0.5 sm:mt-1 font-[var(--font-bebas)] text-sm sm:text-xl tracking-tight text-foreground leading-tight">
+                          <div className="mt-0.5 sm:mt-1 font-display text-sm sm:text-xl tracking-tight text-foreground leading-tight">
                             {r.plan.name}
                           </div>
                         </div>
@@ -315,7 +315,7 @@ export function CompareDialog({
                 <Row label="Effective rate">
                   {plans.map((r) => (
                     <Cell key={r.plan.id}>
-                      <span className="font-[var(--font-bebas)] text-lg sm:text-2xl tracking-tight text-foreground">
+                      <span className="font-display text-lg sm:text-2xl tracking-tight text-foreground">
                         {(r.effectiveCentsPerKwh ?? 0).toFixed(1)}
                         <span className="text-xs sm:text-base text-muted-foreground ml-1">¢/kWh</span>
                       </span>
