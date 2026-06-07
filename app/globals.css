@@ -7,17 +7,19 @@
    Neutrals carry a touch of the accent's warmth (hue ~60, low chroma) so the
    UI reads as a considered warm-paper palette instead of flat clinical gray. */
 .light {
-  --background: oklch(0.993 0.003 75);
+  /* Backgrounds carry a faint burnt-orange wash (hue ~48, nudged chroma) so the
+     "white" surfaces read as warm tinted paper rather than neutral cream. */
+  --background: oklch(0.991 0.009 48);
   --foreground: oklch(0.19 0.012 55);
-  --card: oklch(0.985 0.004 78);
+  --card: oklch(0.983 0.010 48);
   --card-foreground: oklch(0.19 0.012 55);
-  --popover: oklch(0.997 0.002 80);
+  --popover: oklch(0.996 0.007 48);
   --popover-foreground: oklch(0.19 0.012 55);
   --primary: oklch(0.19 0.012 55);
   --primary-foreground: oklch(0.99 0.004 80);
-  --secondary: oklch(0.955 0.006 75);
+  --secondary: oklch(0.953 0.009 48);
   --secondary-foreground: oklch(0.26 0.012 55);
-  --muted: oklch(0.92 0.006 75);
+  --muted: oklch(0.918 0.009 48);
   --muted-foreground: oklch(0.47 0.012 60);
   --accent: oklch(0.66 0.185 42);
   --accent-foreground: oklch(0.16 0.02 55);
@@ -25,13 +27,16 @@
      instead of one flat hue doing all the work. */
   --accent-strong: oklch(0.55 0.165 38);
   --accent-soft: oklch(0.95 0.035 65);
+  /* Soft, light orange used for the default-filled primary button so it reads
+     inviting rather than heavy. */
+  --accent-light: oklch(0.78 0.145 50);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
   --border: oklch(0.865 0.008 70);
   --input: oklch(0.968 0.004 78);
   --ring: oklch(0.66 0.185 42);
   --radius: 0rem;
-  --sidebar: oklch(0.98 0.004 78);
+  --sidebar: oklch(0.978 0.009 48);
   --sidebar-foreground: oklch(0.19 0.012 55);
   --sidebar-primary: oklch(0.66 0.185 42);
   --sidebar-primary-foreground: oklch(0.16 0.02 55);
@@ -39,8 +44,8 @@
   --sidebar-accent-foreground: oklch(0.19 0.012 55);
   --sidebar-border: oklch(0.865 0.008 70);
   --sidebar-ring: oklch(0.66 0.185 42);
-  --grid-line: oklch(0.9 0.006 75);
-  --scrollbar-track: oklch(0.993 0.003 75);
+  --grid-line: oklch(0.9 0.011 48);
+  --scrollbar-track: oklch(0.991 0.009 48);
   --scrollbar-thumb: oklch(0.78 0.01 70);
   --scrollbar-thumb-hover: oklch(0.62 0.014 60);
   --split-flap-bg: oklch(0.985 0.004 78);
@@ -73,6 +78,7 @@
   --accent-foreground: oklch(0.08 0 0);
   --accent-strong: oklch(0.6 0.18 40);
   --accent-soft: oklch(0.22 0.04 50);
+  --accent-light: oklch(0.82 0.15 48);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
   --border: oklch(0.25 0 0);
@@ -121,6 +127,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-strong: var(--accent-strong);
   --color-accent-soft: var(--accent-soft);
+  --color-accent-light: var(--accent-light);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
