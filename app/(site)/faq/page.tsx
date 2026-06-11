@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { BreadcrumbJsonLd } from "@/components/breadcrumb-jsonld";
 
 export const metadata: Metadata = {
   title: "FAQ",
+  alternates: { canonical: "/faq" },
+  robots: { index: false, follow: true },
   description:
     "Answers to common questions about Texergy AI: how plan ranking works, where prices come from, data privacy, deregulated ZIP codes, switching providers, and more.",
 };
@@ -99,6 +102,7 @@ function ContactCard({
 export default function FaqPage() {
   return (
     <article className="mx-auto max-w-5xl px-6 md:px-12">
+      <BreadcrumbJsonLd name="FAQ" path="/faq" />
       <header className="mb-16">
         <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
           FAQ
