@@ -84,25 +84,31 @@ export function RecommendWizard() {
     <div className="relative min-h-screen">
       <div className="grid-bg fixed inset-0 opacity-30" aria-hidden="true" />
 
-      <header className="fixed inset-x-0 top-0 z-30 border-b border-border/50 bg-background/90 px-4 py-4 sm:px-6 sm:py-6 md:px-12 backdrop-blur-md">
-        <div className="flex items-center justify-between gap-6">
-          <button
-            type="button"
-            onClick={() => router.push("/")}
-            className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition-colors"
-          >
-            ← Texergy AI
-          </button>
-          <div className="font-mono text-xs text-muted-foreground">
-            ZIP <span className="text-foreground">{state.zip}</span>
+      <header className="fixed inset-x-0 top-0 z-30 border-b border-border/50 bg-background/90 px-4 py-3.5 sm:px-6 sm:py-4 md:px-12 backdrop-blur-md">
+        {/* Mobile: back + ZIP share a justify-between row with the bar stacked
+            below (no room for all three inline). Desktop: `sm:contents`
+            flattens that wrapper so back / bar / ZIP sit on one aligned row,
+            ordered via the per-child sm:order utilities. */}
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6">
+          <div className="flex items-center justify-between gap-3 sm:contents">
+            <button
+              type="button"
+              onClick={() => router.push("/")}
+              className="shrink-0 font-mono text-xs uppercase tracking-normal text-muted-foreground hover:text-foreground transition-colors sm:order-1"
+            >
+              ← Texergy AI
+            </button>
+            <div className="shrink-0 font-mono text-xs text-muted-foreground sm:order-3">
+              ZIP <span className="text-foreground">{state.zip}</span>
+            </div>
           </div>
-        </div>
-        <div className="mt-3 sm:mt-4 w-full">
-          <ProgressBar steps={progress} />
+          <div className="min-w-0 sm:order-2 sm:flex-1">
+            <ProgressBar steps={progress} />
+          </div>
         </div>
       </header>
 
-      <div className="relative z-10 px-3 pb-12 pt-28 sm:px-6 sm:pt-[152px] md:px-12">
+      <div className="relative z-10 px-3 pb-12 pt-28 sm:px-6 sm:pt-[124px] md:px-12">
         {/* The key prop on motion.div forces a fresh mount on every step
             change, which lets each step play its enter animation. We drop
             AnimatePresence + exit animations because the mode="wait" pattern
