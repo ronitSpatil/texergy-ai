@@ -21,7 +21,11 @@ export function HeroSection() {
   useEffect(() => {
     if (!sectionRef.current || !contentRef.current) return
 
-    const ctx = gsap.context(() => {
+    // Gate the scroll-fade to desktop. On mobile, focusing the ZIP input makes
+    // the browser scroll up to clear the keyboard, which would otherwise drive
+    // this scrub and dim the hero mid-typing.
+    const mm = gsap.matchMedia()
+    mm.add("(min-width: 768px)", () => {
       gsap.to(contentRef.current, {
         y: -100,
         opacity: 0,
@@ -32,9 +36,9 @@ export function HeroSection() {
           scrub: 1,
         },
       })
-    }, sectionRef)
+    })
 
-    return () => ctx.revert()
+    return () => mm.revert()
   }, [])
 
   return (
@@ -45,7 +49,9 @@ export function HeroSection() {
       <div ref={contentRef} className="flex-1 w-full">
         <SplitFlapAudioProvider>
           <div className="relative">
-            <SplitFlapText text="TEXERGYAI" speed={80} accentIndices={[7, 8]} />
+            <div className="flex justify-center md:block">
+              <SplitFlapText text="TEXERGYAI" speed={80} accentIndices={[7, 8]} />
+            </div>
             <div className="mt-4">
               <SplitFlapMuteToggle />
             </div>
@@ -56,7 +62,7 @@ export function HeroSection() {
           Stop Overpaying for Electricity. Start Shopping Smarter with AI.
         </h2>
 
-        <p className="mt-12 max-w-xl font-mono text-[16px] text-muted-foreground leading-relaxed">
+        <p className="mt-12 max-w-xl font-mono text-[14px] sm:text-[16px] text-muted-foreground leading-relaxed">
           <span className="block">
             Enter your ZIP code, share what matters to you, and Texergy AI finds the best electricity plans for residents and businesses alike.
           </span>

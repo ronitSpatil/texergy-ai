@@ -60,7 +60,7 @@ function NavDropdown({
         aria-expanded={open}
         aria-haspopup="true"
         className={cn(
-          "flex items-center gap-1 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.06em] sm:tracking-[0.22em] px-1.5 sm:px-2.5 py-1.5 transition-colors whitespace-nowrap",
+          "flex items-center gap-1 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.01em] sm:tracking-[0.04em] px-1.5 sm:px-2.5 py-1.5 transition-colors whitespace-nowrap",
           open ? "text-foreground" : "text-muted-foreground hover:text-foreground",
         )}
       >
@@ -90,7 +90,7 @@ function NavDropdown({
                 <Link
                   href={href}
                   onClick={() => setOpen(false)}
-                  className="group/item flex items-baseline gap-3 px-4 py-2.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.06em] sm:tracking-[0.18em] text-muted-foreground hover:text-foreground hover:bg-accent/[0.06] transition-colors whitespace-nowrap"
+                  className="group/item flex items-baseline gap-3 px-4 py-2.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.01em] sm:tracking-[0.04em] text-muted-foreground hover:text-foreground hover:bg-accent/[0.06] transition-colors whitespace-nowrap"
                 >
                   <span className="text-[9px] text-accent/60 tabular-nums group-hover/item:text-accent transition-colors">
                     0{index + 1}
@@ -170,7 +170,7 @@ export function SideNav() {
                 onClick={() => scrollToSection(id)}
                 aria-current={active ? "true" : undefined}
                 className={cn(
-                  "font-mono text-[9.5px] sm:text-[11px] uppercase tracking-[0.04em] sm:tracking-[0.22em] px-1.5 sm:px-2.5 py-1.5 transition-colors whitespace-nowrap",
+                  "font-mono text-[9.5px] sm:text-[11px] uppercase tracking-[0.01em] sm:tracking-[0.04em] px-1.5 sm:px-2.5 py-1.5 transition-colors whitespace-nowrap",
                   active
                     ? "text-accent"
                     : "text-muted-foreground hover:text-foreground",
@@ -192,18 +192,18 @@ export function SideNav() {
         onClick={() => setMenuOpen((o) => !o)}
         aria-expanded={menuOpen}
         aria-label={menuOpen ? "Close menu" : "More links"}
-        className="sm:hidden flex flex-col justify-center items-center gap-[5px] w-7 h-7 -mr-0.5 shrink-0 text-foreground"
+        className="sm:hidden flex flex-col justify-center items-center gap-[3px] w-5 h-5 -mr-0.5 shrink-0 text-muted-foreground"
       >
         <span
           className={cn(
-            "block h-px w-4 bg-current transition-transform duration-200",
-            menuOpen && "translate-y-[3px] rotate-45",
+            "block h-px w-3 bg-current transition-transform duration-200",
+            menuOpen && "translate-y-[2px] rotate-45",
           )}
         />
         <span
           className={cn(
-            "block h-px w-4 bg-current transition-transform duration-200",
-            menuOpen && "-translate-y-[3px] -rotate-45",
+            "block h-px w-3 bg-current transition-transform duration-200",
+            menuOpen && "-translate-y-[2px] -rotate-45",
           )}
         />
       </button>

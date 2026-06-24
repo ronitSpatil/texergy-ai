@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { MapPin } from "lucide-react";
 
 /** ZIP entry that replaces the "Join Waitlist" CTA on the hero when the site
  *  is built in product mode. Submitting takes the user straight into the
@@ -16,6 +17,15 @@ export function HeroZipForm() {
   // Customer class is residential-only today. Commercial is shown as a
   // disabled "Soon" affordance so business visitors see it's on the roadmap.
   const customerClass: "residential" | "commercial" = "residential";
+  // Shorter placeholder on phones where the field is narrower.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -74,12 +84,12 @@ export function HeroZipForm() {
       className="relative w-full max-w-2xl mx-auto flex flex-col gap-6 rounded-xl border border-border/50 focus-within:border-accent/50 bg-background/25 backdrop-blur-sm shadow-e2 focus-within:shadow-e3 p-7 sm:p-9 md:p-12 transition-all duration-200"
     >
       <div className="flex items-center justify-between gap-4">
-        <span className="whitespace-nowrap font-mono text-[10px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.3em] text-muted-foreground">
+        <span className="whitespace-nowrap font-mono text-xs sm:text-sm tracking-[0.02em] sm:tracking-[0.06em] text-muted-foreground">
           Get Started
         </span>
         <a
           href="/savings-calculator"
-          className="group/calc inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[10px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.25em] text-muted-foreground hover:text-accent transition-colors"
+          className="group/calc inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-xs sm:text-sm tracking-[0.02em] sm:tracking-[0.06em] text-muted-foreground hover:text-accent transition-colors"
         >
           Savings Calculator
           <span aria-hidden className="transition-transform duration-200 group-hover/calc:translate-x-0.5">→</span>
@@ -107,10 +117,10 @@ export function HeroZipForm() {
           type="button"
           role="radio"
           aria-checked={true}
-          className="relative z-10 flex items-center justify-center whitespace-nowrap font-mono text-[10px] sm:text-xs uppercase tracking-[0.02em] sm:tracking-[0.25em] px-2 sm:px-5 py-2.5 text-background cursor-default"
+          className="relative z-10 flex items-center justify-center whitespace-nowrap font-mono text-[10px] sm:text-xs tracking-[0.02em] sm:tracking-[0.06em] px-2 sm:px-5 py-2.5 text-background cursor-default"
         >
           Residential
-          <span className="ml-1.5 text-[8px] sm:text-[9px] tracking-[0.2em] text-background/70 align-middle">
+          <span className="ml-1.5 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-background/70 align-middle">
             · Beta
           </span>
         </button>
@@ -120,61 +130,63 @@ export function HeroZipForm() {
           aria-checked="false"
           aria-disabled="true"
           disabled
-          className="relative z-10 flex items-center justify-center whitespace-nowrap font-mono text-[10px] sm:text-xs uppercase tracking-[0.02em] sm:tracking-[0.25em] px-2 sm:px-5 py-2.5 text-muted-foreground/50 cursor-not-allowed select-none"
+          className="relative z-10 flex items-center justify-center whitespace-nowrap font-mono text-[10px] sm:text-xs tracking-[0.02em] sm:tracking-[0.06em] px-2 sm:px-5 py-2.5 text-muted-foreground/50 cursor-not-allowed select-none"
           title="Commercial plans are in development."
         >
           Commercial
-          <span className="ml-1.5 text-[8px] sm:text-[9px] tracking-[0.2em] text-muted-foreground/40 align-middle">
+          <span className="ml-1.5 text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-muted-foreground/40 align-middle">
             · Soon
           </span>
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-stretch gap-3">
+      <div className="flex items-stretch overflow-hidden rounded-full border border-foreground/25 bg-background focus-within:border-accent transition-colors duration-200">
         <label htmlFor="hero-zip-input" className="sr-only">
           ZIP code
         </label>
-        <input
-          id="hero-zip-input"
-          inputMode="numeric"
-          autoComplete="postal-code"
-          maxLength={5}
-          placeholder="ENTER ZIP"
-          value={zip}
-          onChange={(e) => {
-            setZip(e.target.value.replace(/\D/g, "").slice(0, 5));
-            if (error) setError(null);
-          }}
-          aria-invalid={error != null}
-          disabled={submitting}
-          className="flex-1 min-w-0 sm:w-52 sm:flex-none rounded-[10px] bg-background border border-foreground/25 px-6 py-5 font-mono text-lg tracking-[0.3em] uppercase text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-accent transition-colors duration-200 disabled:opacity-60"
-        />
-        <motion.button
+        <div className="flex flex-1 min-w-0 items-center gap-2.5 pl-5 pr-3 sm:pl-6">
+          <MapPin aria-hidden className="h-5 w-5 shrink-0 text-muted-foreground/50" strokeWidth={1.75} />
+          <input
+            id="hero-zip-input"
+            inputMode="numeric"
+            autoComplete="postal-code"
+            maxLength={5}
+            placeholder={isMobile ? "Zip" : "Zip Code"}
+            value={zip}
+            onChange={(e) => {
+              setZip(e.target.value.replace(/\D/g, "").slice(0, 5));
+              if (error) setError(null);
+            }}
+            aria-invalid={error != null}
+            disabled={submitting}
+            className="flex-1 min-w-0 bg-transparent py-4 sm:py-5 font-mono text-sm sm:text-base text-foreground placeholder:text-muted-foreground/50 focus:outline-none disabled:opacity-60"
+          />
+        </div>
+        <button
           type="submit"
           disabled={submitting}
-          whileHover={!submitting ? { scale: 1.02 } : undefined}
-          whileTap={!submitting ? { scale: 0.98 } : undefined}
-          transition={{ type: "spring", stiffness: 380, damping: 26 }}
-          className="group inline-flex items-center justify-center gap-2.5 flex-1 rounded-[10px] border border-accent-light bg-accent-light px-8 py-5 font-mono text-base uppercase tracking-widest text-accent-foreground hover:bg-accent hover:border-accent transition-colors disabled:opacity-60"
+          className="group grain-surface inline-flex flex-1 items-center justify-center gap-2.5 overflow-hidden rounded-l-full bg-accent/80 shadow-e1 px-4 sm:px-6 font-mono font-bold text-sm sm:text-base tracking-wide text-background transition duration-200 hover:brightness-95 disabled:opacity-60"
         >
-          <span>{submitting ? "Loading…" : "Find My Plan"}</span>
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden
-            className="transition-transform duration-300 ease-out group-hover:translate-x-1"
-          >
-            <path
-              d="M4 12h15m0 0-5.5-5.5M19 12l-5.5 5.5"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </motion.button>
+          <span className="whitespace-nowrap">{submitting ? "Loading…" : isMobile ? "See Plans" : "Compare Plans"}</span>
+          {!submitting && (
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden
+              className="hidden sm:block"
+            >
+              <path
+                d="M4 12h15m0 0-5.5-5.5M19 12l-5.5 5.5"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </button>
       </div>
       <div className="min-h-[1.25rem] -mt-2" aria-live="polite">
         {error && (

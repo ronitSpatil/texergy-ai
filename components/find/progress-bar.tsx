@@ -60,7 +60,7 @@ export function ProgressBar({ steps }: { steps: Readonly<Step[]> }) {
             className="absolute top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transition-[left] duration-500 ease-out"
             style={{ left: `${pct}%` }}
           >
-            <span className="flex size-7 items-center justify-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.18)] ring-2 ring-accent/40">
+            <span className="flex size-7 items-center justify-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.18)]">
               <img src="/logo.svg" alt="" className="size-[15px]" />
             </span>
           </span>
